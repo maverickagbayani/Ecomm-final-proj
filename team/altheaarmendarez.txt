@@ -1,0 +1,7 @@
+Full name: Althea Antonet Armendarez
+GitHub username: altheaarmendarez
+Group (1-4): 2
+Member # (1-6): 4
+Task: Frontend
+One DOM/JS bug I now know how to spot: Uncaught TypeError: Cannot read properties of null
+One thing I bring to this team: Attention to detail and adaptability
