@@ -1,0 +1,7 @@
+Full name: Maverick Agbayani
+GitHub username: maverickagbayani
+Group (1-4): 5
+Member # (1-6): 1
+Task: General Support
+One DOM/JS bug I now know how to spot: Cannot read properties of null (reading 'addEventListener')
+One thing I bring to this team: Knowledge of frameworks and experience in similar things.
