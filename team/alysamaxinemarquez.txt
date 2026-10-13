@@ -1,0 +1,7 @@
+Full name: Alysa Maxine A. Marquez
+GitHub username: alysamaxine
+Group (1-4): 2
+Member # (1-6):3
+Task: frontend
+One DOM/JS bug I now know how to spot: misspelling an ID or class name inside document.querySelector()
+One thing I bring to this team: willingness to learn
