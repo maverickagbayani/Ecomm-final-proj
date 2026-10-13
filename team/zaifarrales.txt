@@ -1,0 +1,7 @@
+Full name: Zaira Venice Farrales
+GitHub username: zaifarrales
+Group (1-4): 2
+Member # (1-6): 5
+Task: UI/UX Designer
+One DOM/JS bug I now know how to spot: Using global variables accidentally instead of const or let.
+One thing I bring to this team: Organization skills
