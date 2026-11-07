@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>WattSpot — Desktop Frames (1440×900)</title>
+
+    <style>
+      /* ============================================================
+         BASE
+         ============================================================ */
+      :root {
+        --ink: #12131f;
+        --mut: #7b7f93;
+        --bl: #4a6886;
+        --bl2: #e6e6ff;
+        --gl: rgba(255, 255, 255, 0.6);
+        box-sizing: border-box;
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+
+      html {
+        scroll-padding-top: env(safe-area-inset-top, 0px);
+      }
+
+      body {
+        background: #1c1c1f;
+        font-family: Inter, "SF Pro Display", system-ui, sans-serif;
+        color: var(--ink);
+        padding: 24px 0;
+      }
+
+      .lab {
+        color: #bbb;
+        font: 600 13px Inter, system-ui, sans-serif;
+        margin: 28px auto 8px;
+        width: var(--w);
+      }
+
+      .wrap {
+        margin: 0 auto;
+        width: var(--w);
+        height: var(--h);
+        overflow: hidden;
+        border-radius: 10px;
+      }
+
+      .fr {
+        width: 1440px;
+        height: 900px;
+        transform: scale(var(--s));
+        transform-origin: 0 0;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(900px 500px at 85% 0, #d9d6f7, transparent),
+          radial-gradient(700px 500px at 0 100%, #e9dfe9, transparent),
+          linear-gradient(160deg, #eef0f5, #e3e5ee);
+      }
+
+      /* ============================================================
+         NAV
+         ============================================================ */
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        padding: 28px 72px;
+      }
+
+      .logo {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-weight: 700;
+        font-size: 20px;
+      }
+
+      .nav a {
+        color: var(--mut);
+        font-size: 15px;
+        text-decoration: none;
+      }
+
+      .nav a.on {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      .nav .sp {
+        flex: 1;
+      }
+
+      /* ============================================================
+         ICONS
+         ============================================================ */
+      .i {
+        width: 20px;
+        height: 20px;
+      }
+
+      .ic {
+        display: inline-grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--bl2);
+        color: var(--bl);
+        flex: none;
+      }
+
+      .ic.s {
+        width: 34px;
+        height: 34px;
+        border-radius: 11px;
+      }
+
+      .ic.s .i {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* ============================================================
+         CARDS / TYPE / BUTTONS
+         ============================================================ */
+      .g {
+        background: var(--gl);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        border-radius: 32px;
+        box-shadow: 0 24px 60px rgba(90, 90, 160, 0.12);
+        padding: 32px;
+      }
+
+      .dk {
+        background: linear-gradient(160deg, #1a1c2b, #0e0f18);
+        color: #fff;
+        border-radius: 28px;
+        padding: 28px;
+      }
+
+      .h1 {
+        font-size: 56px;
+        line-height: 1.05;
+        letter-spacing: -2px;
+        font-weight: 600;
+      }
+
+      .h2 {
+        font-size: 38px;
+        letter-spacing: -1px;
+        font-weight: 600;
+      }
+
+      .h3 {
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .m {
+        color: var(--mut);
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .dk .m {
+        color: #a6a9c2;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: var(--bl);
+        color: #fff;
+        border-radius: 999px;
+        padding: 16px 30px;
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 0 10px 24px rgba(74, 104, 134, 0.35);
+      }
+
+      .btn.o {
+        background: #fff;
+        color: var(--ink);
+        box-shadow: none;
+        border: 1px solid #e2e3ee;
+      }
+
+      .btn.w {
+        width: 100%;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 20px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid #fff;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      .pill.on {
+        background: var(--bl);
+        color: #fff;
+      }
+
+      .in {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid #e6e7f1;
+        border-radius: 18px;
+        padding: 18px 22px;
+        font-size: 15px;
+        color: var(--mut);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .lbl {
+        font-size: 13px;
+        font-weight: 600;
+        margin: 18px 0 8px;
+      }
+
+      /* ============================================================
+         LAYOUT HELPERS
+         ============================================================ */
+      .row {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .col {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .sb {
+        justify-content: space-between;
+      }
+
+      .main {
+        padding: 8px 72px 0;
+        display: flex;
+        gap: 28px;
+        height: 760px;
+      }
+
+      /* ============================================================
+         TAGS / MAP / PINS
+         ============================================================ */
+      .tag {
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: var(--bl2);
+        color: var(--bl);
+      }
+
+      .tag.gr {
+        background: #dff5ea;
+        color: #12804f;
+      }
+
+      .tag.or {
+        background: #fdebd5;
+        color: #b05f00;
+      }
+
+      .map {
+        position: relative;
+        border-radius: 32px;
+        overflow: hidden;
+        background: linear-gradient(#f4f5fa, #e4e6f1);
+        border: 1px solid #fff;
+        flex: 1;
+      }
+
+      .map:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            transparent 0 70px,
+            rgba(150, 155, 190, 0.22) 70px 72px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent 0 90px,
+            rgba(150, 155, 190, 0.22) 90px 92px
+          );
+        transform: skew(-8deg);
+      }
+
+      .pin {
+        position: absolute;
+        background: var(--bl);
+        color: #fff;
+        border-radius: 999px;
+        padding: 9px 15px;
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 10px 24px rgba(74, 104, 134, 0.4);
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .pin.d {
+        background: #14161f;
+      }
+
+      /* ============================================================
+         PROGRESS BAR / MODAL / OPTIONS
+         ============================================================ */
+      .bar {
+        height: 10px;
+        border-radius: 9px;
+        background: #e4e5f0;
+        overflow: hidden;
+      }
+
+      .bar i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #8d8df7, var(--bl));
+        border-radius: 9px;
+      }
+
+      .modal {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 600px;
+        z-index: 2;
+      }
+
+      .ov {
+        position: absolute;
+        inset: 0;
+        background: rgba(30, 30, 60, 0.25);
+        backdrop-filter: blur(8px);
+        z-index: 1;
+      }
+
+      .sel {
+        border: 2px solid var(--bl);
+        background: #fff;
+      }
+
+      .opt {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        padding: 18px 22px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.75);
+        border: 2px solid transparent;
+        font-weight: 500;
+      }
+
+      hr {
+        border: 0;
+        border-top: 1px solid #e3e4ee;
+        margin: 18px 0;
+      }
+
+      .ctr {
+        display: grid;
+        place-items: center;
+      }
+
+      .car {
+        width: 100%;
+        height: 220px;
+        border-radius: 26px;
+        background: linear-gradient(135deg, #e2e1fb, #f4f0f7);
+        display: grid;
+        place-items: center;
+        color: var(--bl);
+      }
+
+      /* ============================================================
+         v1 — GLOSSY BACKGROUND + DECORATIVE SHAPES
+         ============================================================ */
+      .fr {
+        background:
+          radial-gradient(650px 480px at 92% 6%, rgba(150, 140, 255, 0.6), transparent 70%),
+          radial-gradient(560px 460px at 4% 96%, rgba(255, 185, 205, 0.55), transparent 70%),
+          radial-gradient(520px 420px at 62% 108%, rgba(120, 185, 255, 0.5), transparent 70%),
+          radial-gradient(420px 320px at 28% -2%, rgba(255, 215, 185, 0.5), transparent 70%),
+          linear-gradient(160deg, #f3f3fa, #dde1ee);
+      }
+
+      .fr > .nav,
+      .fr > .main {
+        position: relative;
+        z-index: 1;
+      }
+
+      .deco {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      .deco i {
+        position: absolute;
+        display: block;
+      }
+
+      .deco .sp {
+        width: 190px;
+        height: 190px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 30% 24%,
+          #fff 0,
+          rgba(255, 255, 255, 0.75) 14%,
+          rgba(175, 175, 255, 0.55) 45%,
+          rgba(74, 104, 134, 0.75) 100%
+        );
+        box-shadow:
+          inset -14px -18px 40px rgba(60, 60, 200, 0.45),
+          inset 10px 10px 30px rgba(255, 255, 255, 0.9),
+          0 40px 70px rgba(74, 104, 134, 0.3);
+      }
+
+      .deco .tl {
+        width: 150px;
+        height: 150px;
+        border-radius: 38px;
+        transform: rotate(-18deg);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.85),
+          rgba(190, 190, 255, 0.25) 55%,
+          rgba(255, 255, 255, 0.55)
+        );
+        border: 1.5px solid rgba(255, 255, 255, 0.95);
+        box-shadow:
+          inset 0 2px 0 #fff,
+          inset 0 -14px 30px rgba(74, 104, 134, 0.25),
+          0 30px 60px rgba(74, 104, 134, 0.25);
+        backdrop-filter: blur(6px);
+      }
+
+      .deco .pl {
+        width: 230px;
+        height: 76px;
+        border-radius: 999px;
+        transform: rotate(14deg);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.9),
+          rgba(200, 205, 255, 0.3)
+        );
+        border: 1.5px solid #fff;
+        box-shadow:
+          inset 0 2px 0 #fff,
+          0 26px 50px rgba(74, 104, 134, 0.22);
+      }
+
+      .g {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.78),
+          rgba(255, 255, 255, 0.28)
+        );
+        -webkit-backdrop-filter: blur(40px) saturate(190%);
+        backdrop-filter: blur(40px) saturate(190%);
+        border: 1px solid rgba(255, 255, 255, 0.85);
+        box-shadow:
+          0 34px 80px rgba(80, 80, 180, 0.2),
+          inset 0 1.5px 0 #fff,
+          inset 0 -1px 0 rgba(255, 255, 255, 0.4),
+          inset 0 0 40px rgba(255, 255, 255, 0.25);
+      }
+
+      .dk {
+        background:
+          radial-gradient(420px 220px at 100% 0, rgba(130, 130, 255, 0.5), transparent 70%),
+          linear-gradient(145deg, rgba(46, 50, 92, 0.94), rgba(12, 13, 26, 0.96));
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow:
+          0 34px 80px rgba(40, 40, 140, 0.4),
+          inset 0 1.5px 0 rgba(255, 255, 255, 0.3),
+          inset 0 0 50px rgba(120, 120, 255, 0.12);
+      }
+
+      .ic {
+        background: linear-gradient(145deg, #fff, #d9d9ff);
+        box-shadow:
+          inset 0 1.5px 0 #fff,
+          inset 0 -6px 12px rgba(74, 104, 134, 0.18),
+          0 10px 22px rgba(74, 104, 134, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+      }
+
+      .dk .ic {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.08)
+        );
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #b9b9ff;
+      }
+
+      .btn {
+        background: linear-gradient(180deg, #8f8fff, #4a6886 55%, #4a4ae0);
+        box-shadow:
+          inset 0 1.5px 0 rgba(255, 255, 255, 0.65),
+          inset 0 -6px 12px rgba(40, 40, 190, 0.4),
+          0 16px 34px rgba(74, 104, 134, 0.45);
+      }
+
+      .btn.o {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.9),
+          rgba(255, 255, 255, 0.5)
+        );
+        box-shadow:
+          inset 0 1.5px 0 #fff,
+          0 10px 24px rgba(80, 80, 160, 0.12);
+        border: 1px solid #fff;
+      }
+
+      .pill {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.8),
+          rgba(255, 255, 255, 0.4)
+        );
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        box-shadow:
+          inset 0 1.5px 0 #fff,
+          0 8px 20px rgba(80, 80, 160, 0.1);
+      }
+
+      .pill.on {
+        background: linear-gradient(180deg, #8f8fff, #4a6886);
+        color: #fff;
+        box-shadow:
+          inset 0 1.5px 0 rgba(255, 255, 255, 0.6),
+          0 10px 24px rgba(74, 104, 134, 0.4);
+      }
+
+      .in,
+      .opt {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.45),
+          rgba(255, 255, 255, 0.7)
+        );
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow:
+          inset 0 2px 6px rgba(80, 80, 160, 0.08),
+          0 1px 0 #fff;
+      }
+
+      .opt.sel {
+        border: 1.5px solid var(--bl);
+        box-shadow:
+          0 0 0 5px rgba(74, 104, 134, 0.12),
+          inset 0 1.5px 0 #fff;
+      }
+
+      .tag {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.8),
+          rgba(215, 215, 255, 0.6)
+        );
+        box-shadow: inset 0 1px 0 #fff;
+      }
+
+      .map {
+        background:
+          radial-gradient(400px 300px at 30% 30%, rgba(255, 255, 255, 0.7), transparent),
+          linear-gradient(145deg, rgba(255, 255, 255, 0.65), rgba(200, 205, 240, 0.45));
+        -webkit-backdrop-filter: blur(30px);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow:
+          0 34px 80px rgba(80, 80, 180, 0.18),
+          inset 0 1.5px 0 #fff;
+      }
+
+      .pin {
+        background: linear-gradient(180deg, #9a9aff, #4a6886);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow:
+          inset 0 1.5px 0 rgba(255, 255, 255, 0.6),
+          0 0 0 8px rgba(74, 104, 134, 0.14),
+          0 14px 30px rgba(74, 104, 134, 0.5);
+      }
+
+      .pin.d {
+        background: linear-gradient(180deg, #3a3d5e, #12131f);
+      }
+
+      .bar {
+        box-shadow: inset 0 2px 4px rgba(80, 80, 160, 0.15);
+      }
+
+      .bar i {
+        box-shadow: 0 0 14px rgba(74, 104, 134, 0.6);
+      }
+
+      .car {
+        background:
+          radial-gradient(260px 160px at 30% 20%, rgba(255, 255, 255, 0.95), transparent),
+          linear-gradient(135deg, rgba(190, 190, 255, 0.7), rgba(255, 230, 240, 0.6));
+        border: 1px solid #fff;
+        box-shadow:
+          inset 0 2px 0 #fff,
+          inset 0 -20px 40px rgba(74, 104, 134, 0.12);
+      }
+
+      .ov {
+        background: rgba(40, 40, 90, 0.22);
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+      }
+
+      .modal {
+        box-shadow:
+          0 50px 120px rgba(50, 50, 160, 0.35),
+          inset 0 1.5px 0 #fff;
+      }
+
+      /* ============================================================
+         v3 — QUIETER BACKGROUND, GLASS ON INTERACTIVE PARTS
+         ============================================================ */
+      .fr {
+        background:
+          radial-gradient(620px 440px at 94% 4%, rgba(170, 165, 235, 0.26), transparent 70%),
+          radial-gradient(520px 420px at 2% 100%, rgba(235, 205, 215, 0.22), transparent 70%),
+          linear-gradient(160deg, #eff0f5, #e1e3eb);
+      }
+
+      .deco {
+        opacity: 0.5;
+        filter: saturate(0.55);
+      }
+
+      .g {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.62),
+          rgba(255, 255, 255, 0.3)
+        );
+        box-shadow:
+          0 24px 60px rgba(37, 55, 69, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+
+      .dk {
+        background: linear-gradient(145deg, #2a2c3c, #15161f);
+        box-shadow:
+          0 24px 60px rgba(30, 30, 60, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      }
+
+      .ic {
+        background:
+          radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.25) 58%),
+          linear-gradient(145deg, rgba(150, 150, 255, 0.45), rgba(74, 104, 134, 0.18));
+        -webkit-backdrop-filter: blur(14px);
+        backdrop-filter: blur(14px);
+        border: 1.5px solid rgba(255, 255, 255, 0.95);
+        box-shadow:
+          inset 0 2px 1px #fff,
+          inset 0 -8px 14px rgba(74, 104, 134, 0.22),
+          0 12px 26px rgba(74, 104, 134, 0.28);
+      }
+
+      .ic .i {
+        filter: drop-shadow(0 2px 4px rgba(74, 104, 134, 0.45));
+      }
+
+      .dk .ic {
+        background:
+          radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.05) 60%),
+          rgba(130, 130, 255, 0.22);
+        border-color: rgba(255, 255, 255, 0.4);
+        color: #aebfcc;
+      }
+
+      .btn {
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0, rgba(255, 255, 255, 0.08) 48%, transparent 50%),
+          linear-gradient(180deg, rgba(140, 140, 255, 0.92), rgba(70, 70, 230, 0.95));
+        border: 1.5px solid rgba(255, 255, 255, 0.7);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        box-shadow:
+          inset 0 2px 1px rgba(255, 255, 255, 0.75),
+          inset 0 -8px 14px rgba(30, 30, 180, 0.35),
+          0 18px 36px rgba(74, 104, 134, 0.4);
+      }
+
+      .btn.o {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.95),
+          rgba(255, 255, 255, 0.4)
+        );
+        border: 1.5px solid #fff;
+        color: var(--ink);
+        box-shadow:
+          inset 0 2px 1px #fff,
+          inset 0 -8px 14px rgba(37, 55, 69, 0.12),
+          0 12px 28px rgba(37, 55, 69, 0.14);
+      }
+
+      .pill {
+        background:
+          radial-gradient(120px 40px at 30% 0, rgba(255, 255, 255, 0.95), transparent),
+          rgba(255, 255, 255, 0.4);
+        border: 1.5px solid rgba(255, 255, 255, 0.95);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
+        box-shadow:
+          inset 0 2px 1px #fff,
+          inset 0 -6px 10px rgba(37, 55, 69, 0.1),
+          0 10px 24px rgba(37, 55, 69, 0.14);
+      }
+
+      .pill.on {
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0, rgba(255, 255, 255, 0.08) 48%, transparent 50%),
+          linear-gradient(180deg, rgba(140, 140, 255, 0.92), rgba(70, 70, 230, 0.95));
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.7);
+        box-shadow:
+          inset 0 2px 1px rgba(255, 255, 255, 0.7),
+          0 12px 26px rgba(74, 104, 134, 0.4);
+      }
+
+      .in,
+      .opt {
+        background:
+          radial-gradient(300px 50px at 20% 0, rgba(255, 255, 255, 0.95), transparent),
+          rgba(255, 255, 255, 0.35);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        backdrop-filter: blur(24px) saturate(180%);
+        border: 1.5px solid rgba(255, 255, 255, 0.95);
+        box-shadow:
+          inset 0 2px 1px #fff,
+          inset 0 -8px 14px rgba(37, 55, 69, 0.1),
+          0 12px 28px rgba(37, 55, 69, 0.12);
+      }
+
+      .in {
+        border-radius: 999px;
+      }
+
+      .in[style*="height"] {
+        border-radius: 22px;
+      }
+
+      .opt.sel {
+        border-color: rgba(74, 104, 134, 0.8);
+        box-shadow:
+          0 0 0 5px rgba(74, 104, 134, 0.12),
+          inset 0 2px 1px #fff,
+          0 12px 28px rgba(74, 104, 134, 0.2);
+      }
+
+      .tag {
+        background:
+          radial-gradient(80px 20px at 30% 0, #fff, transparent),
+          rgba(200, 200, 255, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.95);
+        box-shadow:
+          inset 0 1px 1px #fff,
+          0 4px 10px rgba(74, 104, 134, 0.12);
+      }
+
+      .pin {
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0, rgba(255, 255, 255, 0.08) 48%, transparent 50%),
+          linear-gradient(180deg, rgba(140, 140, 255, 0.92), rgba(70, 70, 230, 0.95));
+        border: 1.5px solid rgba(255, 255, 255, 0.75);
+        box-shadow:
+          inset 0 2px 1px rgba(255, 255, 255, 0.7),
+          0 0 0 8px rgba(74, 104, 134, 0.12),
+          0 14px 30px rgba(74, 104, 134, 0.45);
+      }
+
+      .pin.d {
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0, transparent 50%),
+          linear-gradient(180deg, #3c3f55, #14151f);
+      }
+
+      .map {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.6),
+          rgba(215, 218, 238, 0.4)
+        );
+        box-shadow:
+          0 24px 60px rgba(37, 55, 69, 0.1),
+          inset 0 1px 0 #fff;
+      }
+
+      .ov {
+        background: rgba(40, 40, 80, 0.16);
+      }
+
+      /* ============================================================
+         v4 — FROSTED MATTE GLASS, WARM NEUTRAL
+         ============================================================ */
+      :root {
+        --mut: #7d776f;
+        --ink: #26231f;
+        --bl2: rgba(255, 255, 255, 0.55);
+        --fg: rgba(255, 255, 255, 0.34);
+        --rim: 1px solid rgba(255, 255, 255, 0.75);
+        --bf: blur(28px) saturate(130%);
+      }
+
+      .fr {
+        background:
+          radial-gradient(800px 420px at 50% 34%, rgba(255, 255, 255, 0.45), transparent 70%),
+          radial-gradient(500px 360px at 96% 50%, rgba(225, 190, 170, 0.25), transparent 70%),
+          linear-gradient(180deg, #d8d1c9 0%, #e7e2db 52%, #f3efe9 100%);
+      }
+
+      .deco {
+        opacity: 1;
+        filter: none;
+      }
+
+      .fr:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background:
+          repeating-linear-gradient(0deg, transparent 0 99px, rgba(255, 255, 255, 0.4) 99px 100px),
+          repeating-linear-gradient(90deg, transparent 0 99px, rgba(255, 255, 255, 0.4) 99px 100px);
+        -webkit-mask-image: linear-gradient(180deg, #000, transparent 65%);
+        mask-image: linear-gradient(180deg, #000, transparent 65%);
+      }
+
+      .deco i {
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+
+      .deco .sp {
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle at 32% 26%, #f8dccb, #e8b99f 60%, #d7a287);
+        box-shadow:
+          inset -10px -12px 24px rgba(160, 100, 70, 0.25),
+          0 30px 50px rgba(120, 90, 70, 0.2);
+      }
+
+      .deco .tl {
+        width: 260px;
+        height: 190px;
+        border-radius: 30px;
+        transform: rotate(-14deg) skewX(-8deg);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.7),
+          rgba(255, 255, 255, 0.18)
+        );
+        border: var(--rim);
+        box-shadow:
+          0 30px 60px rgba(37, 55, 69, 0.14),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+      }
+
+      .deco .pl {
+        width: 280px;
+        height: 170px;
+        border-radius: 30px;
+        transform: rotate(12deg) skewX(8deg);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.55),
+          rgba(255, 255, 255, 0.12)
+        );
+        border: var(--rim);
+        box-shadow:
+          0 30px 60px rgba(37, 55, 69, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      .nav {
+        margin: 24px 72px 0;
+        padding: 14px 26px;
+        background: var(--fg);
+        -webkit-backdrop-filter: var(--bf);
+        backdrop-filter: var(--bf);
+        border: var(--rim);
+        border-radius: 24px;
+        box-shadow:
+          0 14px 40px rgba(37, 55, 69, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+
+      .g {
+        background: var(--fg);
+        -webkit-backdrop-filter: var(--bf);
+        backdrop-filter: var(--bf);
+        border: var(--rim);
+        box-shadow:
+          0 24px 60px rgba(37, 55, 69, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      }
+
+      .dk {
+        background: rgba(48, 44, 52, 0.72);
+        -webkit-backdrop-filter: var(--bf);
+        backdrop-filter: var(--bf);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow:
+          0 24px 60px rgba(60, 50, 50, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      }
+
+      .ic {
+        background: rgba(255, 255, 255, 0.5);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
+        border: var(--rim);
+        box-shadow:
+          0 8px 20px rgba(37, 55, 69, 0.12),
+          inset 0 1px 0 #fff;
+      }
+
+      .ic .i {
+        filter: none;
+      }
+
+      .dk .ic {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #aebfcc;
+      }
+
+      .in,
+      .opt {
+        background: rgba(255, 255, 255, 0.4);
+        -webkit-backdrop-filter: var(--bf);
+        backdrop-filter: var(--bf);
+        border: var(--rim);
+        box-shadow:
+          0 8px 24px rgba(37, 55, 69, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+
+      .opt.sel {
+        border: 1.5px solid rgba(74, 104, 134, 0.7);
+        box-shadow:
+          0 0 22px rgba(74, 104, 134, 0.22),
+          inset 0 1px 0 #fff;
+      }
+
+      .pill {
+        background: rgba(255, 255, 255, 0.4);
+        -webkit-backdrop-filter: var(--bf);
+        backdrop-filter: var(--bf);
+        border: var(--rim);
+        box-shadow:
+          0 8px 20px rgba(37, 55, 69, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+
+      .pill.on {
+        background: #fff;
+        color: var(--ink);
+        border-color: #fff;
+        box-shadow: 0 10px 24px rgba(37, 55, 69, 0.14);
+      }
+
+      .btn {
+        background: rgba(74, 104, 134, 0.86);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        box-shadow:
+          0 0 28px rgba(74, 104, 134, 0.38),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5),
+          inset 0 0 18px rgba(255, 255, 255, 0.12);
+      }
+
+      .btn.o {
+        background: rgba(255, 255, 255, 0.5);
+        color: var(--ink);
+        border: var(--rim);
+        box-shadow:
+          0 8px 20px rgba(37, 55, 69, 0.1),
+          inset 0 1px 0 #fff;
+      }
+
+      .tag {
+        background: rgba(255, 255, 255, 0.55);
+        border: var(--rim);
+        box-shadow: none;
+        color: #3f5c7a;
+      }
+
+      .tag.gr {
+        color: #12804f;
+      }
+
+      .tag.or {
+        color: #b05f00;
+      }
+
+      .pin {
+        background: rgba(74, 104, 134, 0.86);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow:
+          0 0 0 7px rgba(255, 255, 255, 0.35),
+          0 12px 28px rgba(74, 104, 134, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      }
+
+      .pin.d {
+        background: rgba(48, 44, 52, 0.88);
+      }
+
+      .map {
+        background: var(--fg);
+        -webkit-backdrop-filter: var(--bf);
+        backdrop-filter: var(--bf);
+        border: var(--rim);
+        box-shadow:
+          0 24px 60px rgba(37, 55, 69, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.85);
+      }
+
+      .map:before {
+        background:
+          repeating-linear-gradient(0deg, transparent 0 70px, rgba(255, 255, 255, 0.55) 70px 72px),
+          repeating-linear-gradient(90deg, transparent 0 90px, rgba(255, 255, 255, 0.55) 90px 92px);
+      }
+
+      .car {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.6),
+          rgba(240, 215, 200, 0.45)
+        );
+        border: var(--rim);
+        box-shadow: inset 0 1px 0 #fff;
+      }
+
+      .bar {
+        background: rgba(255, 255, 255, 0.55);
+        box-shadow: inset 0 1px 3px rgba(37, 55, 69, 0.12);
+      }
+
+      .bar i {
+        box-shadow: none;
+      }
+
+      .ov {
+        background: rgba(70, 60, 55, 0.16);
+      }
+
+      .modal {
+        box-shadow:
+          0 40px 100px rgba(80, 65, 55, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      }
+
+      /* ============================================================
+         v5 — APPLE-LIKE COOL GREY + MUTED STEEL BLUE
+         ============================================================ */
+      :root {
+        --ink: #11212d;
+        --mut: #6b7781;
+        --bl: #4a6886;
+      }
+
+      body,
+      .fr {
+        font-family: -apple-system, "SF Pro Display", "Helvetica Neue", Inter,
+          system-ui, sans-serif;
+      }
+
+      .fr {
+        background:
+          radial-gradient(800px 420px at 50% 30%, rgba(255, 255, 255, 0.55), transparent 70%),
+          radial-gradient(520px 380px at 96% 8%, rgba(155, 168, 171, 0.3), transparent 70%),
+          linear-gradient(180deg, #cdd2d6 0%, #e3e6e9 52%, #f2f4f5 100%);
+      }
+
+      .dk {
+        background: rgba(17, 33, 45, 0.8);
+      }
+
+      .pin.d {
+        background: rgba(17, 33, 45, 0.88);
+      }
+
+      .deco .sp {
+        background: radial-gradient(circle at 32% 26%, #fff, #d3dadf 50%, #9ba8ab);
+        box-shadow:
+          inset -10px -12px 24px rgba(37, 55, 69, 0.25),
+          0 30px 50px rgba(37, 55, 69, 0.2);
+      }
+
+      .car {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.6),
+          rgba(155, 168, 171, 0.3)
+        );
+      }
+
+      .btn {
+        background: rgba(74, 104, 134, 0.9);
+        box-shadow:
+          0 0 24px rgba(74, 104, 134, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      }
+
+      .h1,
+      .h2 {
+        letter-spacing: -0.03em;
+      }
+
+      /* ============================================================
+         v6 — TRUE SEE-THROUGH GLASS OVER A BLURRED DUSK GRADIENT
+         ============================================================ */
+      :root {
+        --ink: #fff;
+        --mut: rgba(255, 255, 255, 0.68);
+        --bl: #cfe0ff;
+        --gl2: rgba(255, 255, 255, 0.14);
+        --rim2: 1px solid rgba(255, 255, 255, 0.34);
+        --bf2: blur(34px) saturate(150%);
+      }
+
+      .fr {
+        color: #fff;
+        background: linear-gradient(180deg, #60b853 0%, #172116 100%);
+      }
+
+      .deco,
+      .fr:before {
+        display: none;
+      }
+
+      .fr:after {
+        content: "";
+        position: absolute;
+        inset: 20px 32px 16px;
+        z-index: 0;
+        border-radius: 40px;
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.2),
+          rgba(255, 255, 255, 0.08)
+        );
+        -webkit-backdrop-filter: blur(44px) saturate(150%);
+        backdrop-filter: blur(44px) saturate(150%);
+        border: var(--rim2);
+        box-shadow:
+          0 40px 100px rgba(20, 35, 60, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.45);
+      }
+
+      .nav,
+      .g,
+      .map,
+      .pill,
+      .in,
+      .opt {
+        background: var(--gl2);
+        -webkit-backdrop-filter: var(--bf2);
+        backdrop-filter: var(--bf2);
+        border: var(--rim2);
+        box-shadow:
+          0 12px 34px rgba(20, 35, 60, 0.16),
+          inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      }
+
+      .nav {
+        margin: 40px 88px 0;
+      }
+
+      .main {
+        padding-left: 88px;
+        padding-right: 88px;
+      }
+
+      .main {
+        height: 730px;
+      }
+
+      .g {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.22),
+          rgba(255, 255, 255, 0.1)
+        );
+      }
+
+      .dk {
+        background: rgba(17, 33, 45, 0.42);
+        -webkit-backdrop-filter: var(--bf2);
+        backdrop-filter: var(--bf2);
+        border: var(--rim2);
+        box-shadow:
+          0 20px 50px rgba(20, 35, 60, 0.28),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      .ic {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.4),
+          rgba(120, 165, 235, 0.3)
+        );
+        border: var(--rim2);
+        color: #e6efff;
+        box-shadow:
+          0 8px 20px rgba(20, 35, 60, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      }
+
+      .dk .ic {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.3),
+          rgba(120, 165, 235, 0.25)
+        );
+        color: #e6efff;
+      }
+
+      .pill.on {
+        background: rgba(255, 255, 255, 0.92);
+        color: #11212d;
+        border-color: #fff;
+      }
+
+      .btn {
+        background: rgba(255, 255, 255, 0.92);
+        color: #11212d;
+        border: 1px solid #fff;
+        box-shadow:
+          0 0 30px rgba(255, 255, 255, 0.35),
+          0 12px 28px rgba(20, 35, 60, 0.22);
+      }
+
+      .btn.o {
+        background: var(--gl2);
+        color: #fff;
+        border: var(--rim2);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      }
+
+      .tag,
+      .tag.gr,
+      .tag.or {
+        background: rgba(255, 255, 255, 0.22);
+        border: var(--rim2);
+        color: #e6efff;
+      }
+
+      .tag.gr {
+        color: #c6f5dc;
+      }
+
+      .tag.or {
+        color: #ffdcae;
+      }
+
+      .opt.sel {
+        border: 1.5px solid #fff;
+        background: rgba(255, 255, 255, 0.26);
+        box-shadow: 0 0 26px rgba(255, 255, 255, 0.3);
+      }
+
+      .pin {
+        background: rgba(120, 165, 235, 0.78);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        box-shadow:
+          0 0 0 7px rgba(255, 255, 255, 0.16),
+          0 12px 28px rgba(20, 35, 60, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      }
+
+      .pin.d {
+        background: rgba(17, 33, 45, 0.6);
+      }
+
+      /* Availability colors for map pins */
+      .pin.ok,
+      .pin.yl,
+      .pin.or,
+      .pin.rd {
+        border: 2px solid #fff;
+        color: #10200f;
+      }
+
+      .pin.ok {
+        background: #3dff7a; /* green: 4+ free */
+        box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.3), 0 12px 28px rgba(0, 0, 0, 0.35);
+      }
+
+      .pin.yl {
+        background: #ffd93d; /* yellow: 2-3 free */
+        box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.3), 0 12px 28px rgba(0, 0, 0, 0.35);
+      }
+
+      .pin.or {
+        background: #ff9a3d; /* orange: 1 free */
+        box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.3), 0 12px 28px rgba(0, 0, 0, 0.35);
+      }
+
+      .pin.rd {
+        background: #ff4d4d; /* red: 0 free */
+        color: #fff;
+        box-shadow: 0 0 0 7px rgba(255, 255, 255, 0.3), 0 12px 28px rgba(0, 0, 0, 0.35);
+      }
+
+      .map:before {
+        background:
+          repeating-linear-gradient(0deg, transparent 0 70px, rgba(255, 255, 255, 0.16) 70px 72px),
+          repeating-linear-gradient(90deg, transparent 0 90px, rgba(255, 255, 255, 0.16) 90px 92px);
+      }
+
+      .bar {
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: none;
+      }
+
+      .bar i {
+        background: linear-gradient(90deg, #e6efff, #9cc0f5);
+      }
+
+      .car {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.08)
+        );
+        border: var(--rim2);
+        color: #e6efff;
+      }
+
+      hr {
+        border-top-color: rgba(255, 255, 255, 0.25);
+      }
+
+      .ov {
+        background: rgba(20, 30, 55, 0.25);
+      }
+
+      .modal {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.26),
+          rgba(255, 255, 255, 0.12)
+        );
+      }
+
+      .nav a {
+        color: rgba(255, 255, 255, 0.65);
+      }
+
+      .nav a.on {
+        color: #fff;
+      }
+
+      /* SVG ring on the charging screen */
+      svg circle[stroke="#e4e5f0"] {
+        stroke: rgba(255, 255, 255, 0.3);
+      }
+
+      svg circle[stroke="#4a6886"] {
+        stroke: #e6efff;
+      }
+
+      svg text {
+        fill: #fff;
+      }
+
+      /* Idle-fee warning card */
+      .g[style*="fdf1e0"] {
+        background: rgba(255, 214, 168, 0.6) !important;
+      }
+
+      .g[style*="fdf1e0"] b,
+      .g[style*="fdf1e0"] .ic {
+        color: #d32020;
+      }
+
+      /* ============================================================
+         v7 — WHITER GLASS BOXES (still see-through)
+         Tweak the two alpha values below: higher = whiter / less clear.
+         ============================================================ */
+      .g,
+      .g.modal {
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.62),
+          rgba(255, 255, 255, 0.42)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        /* dark text inside the lighter boxes so it stays readable */
+        --ink: #11212d;
+        --mut: rgba(17, 33, 45, 0.62);
+        --bl: #2f7a2a;
+        color: var(--ink);
+      }
+
+      .g .tag,
+      .g .tag.gr,
+      .g .tag.or {
+        background: rgba(255, 255, 255, 0.55);
+        color: #1d4f1a;
+      }
+
+      .g .tag.or {
+        color: #a14f00;
+      }
+
+      .g .ic {
+        background: rgba(255, 255, 255, 0.6);
+        color: #2f7a2a;
+      }
+
+      .g .btn.o {
+        background: rgba(255, 255, 255, 0.55);
+        color: var(--ink);
+      }
+
+      .g .bar {
+        background: rgba(17, 33, 45, 0.14);
+      }
+
+      .g .bar i {
+        background: #8be07d;
+      }
+
+      .g svg text {
+        fill: #11212d;
+      }
+
+      .g svg circle[stroke="#e4e5f0"] {
+        stroke: rgba(17, 33, 45, 0.15);
+      }
+
+      .g svg circle[stroke="#4a6886"] {
+        stroke: #2f7a2a;
+      }
+
+      /* Availability level for dark status boxes
+         lv-ok = 75-100% free, lv-yl = 50-74%, lv-or = 25-49%, lv-rd = 0-24% */
+      .dk.lv-ok,
+      .dk.lv-yl,
+      .dk.lv-or,
+      .dk.lv-rd {
+        color: #10200f;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .dk.lv-ok .m,
+      .dk.lv-yl .m,
+      .dk.lv-or .m {
+        color: rgba(16, 32, 15, 0.72);
+      }
+
+      .dk.lv-ok {
+        background: rgba(61, 255, 122, 0.88);
+      }
+
+      .dk.lv-yl {
+        background: rgba(255, 217, 61, 0.9);
+      }
+
+      .dk.lv-or {
+        background: rgba(255, 154, 61, 0.9);
+      }
+
+      .dk.lv-rd {
+        background: rgba(255, 77, 77, 0.9);
+        color: #fff;
+      }
+
+      .dk.lv-rd .m {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      /* Buttons sitting on glass boxes: same green as the background's top color */
+      .g .btn:not(.o) {
+        background: #60b853;
+        color: #0f1f0e;
+        border: 1px solid rgba(255, 255, 255, 0.55);
+        box-shadow: 0 10px 24px rgba(23, 33, 22, 0.28);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="b"></div>
+
+    <script>
+      /* ==========================================================
+         ICON PATHS
+         ========================================================== */
+      const P = {
+        bolt: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
+        pin: '<path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2"/>',
+        car: '<path d="M4 16l2-6h12l2 6v3H4zM7 16h.01M17 16h.01"/>',
+        user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+        search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>',
+        check: '<path d="M5 12l5 5 9-10"/>',
+        alert: '<path d="M12 3l10 18H2zM12 10v5"/>',
+        card: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>',
+        star: '<path d="M12 3l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/>',
+        clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+        plug: '<path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4"/>',
+        gift: '<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M12 8c-3-5-7-2-4 0M12 8c3-5 7-2 4 0"/>',
+        list: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>',
+        flag: '<path d="M5 21V4h12l-2 4 2 4H5"/>',
+      };
+
+      /* ==========================================================
+         SMALL BUILDING BLOCKS
+         ========================================================== */
+      const I = (n) => `
+        <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[n]}</svg>`;
+
+      const ic = (n, s) => `<span class="ic ${s ? "s" : ""}">${I(n)}</span>`;
+
+      const logo = `<div class="logo">${ic("bolt", "s")}WattSpot</div>`;
+
+      const nav = (a) => `
+        <div class="nav">
+          ${logo}
+          ${["Map", "Stations", "Sessions", "Wallet", "Premium"]
+            .map((x) => `<a class="${x == a ? "on" : ""}">${x}</a>`)
+            .join("")}
+          <span class="sp"></span>
+          <span class="pill">${I("car")} Ioniq 5</span>
+          ${ic("user", "s")}
+        </div>`;
+
+      const stat = (i, t, v) => `
+        <div class="g row" style="padding:22px">
+          ${ic(i)}
+          <div>
+            <div class="m">${t}</div>
+            <div class="h3">${v}</div>
+          </div>
+        </div>`;
+
+      const port = (n, c, k, st) => `
+        <div class="g col" style="gap:14px;padding:26px">
+          <div class="row sb">
+            <b>Port #${n}</b>
+            <span class="tag ${st ? "or" : "gr"}">${st ? "IN USE" : "AVAILABLE"}</span>
+          </div>
+          <div class="row">
+            <span class="tag">${c}</span>
+            <span class="m">${k} kW</span>
+          </div>
+          ${
+            st
+              ? `<div class="m">Porsche Taycan</div>
+                 <div class="bar"><i style="width:${st}%"></i></div>
+                 <div class="row sb">
+                   <b>${st}%</b>
+                   <span class="m">~4 min left</span>
+                 </div>`
+              : `<div class="m">Plug ready for instant connection.</div>
+                 <div class="btn w">Book socket</div>`
+          }
+        </div>`;
+
+      const hub = (n, d, a, p, c) => `
+        <div class="g row sb" style="padding:22px 26px;border-radius:24px">
+          ${ic("pin")}
+          <div style="flex:1">
+            <div class="h3">${n}</div>
+            <div class="m">${d} · ${c} · ${p}</div>
+          </div>
+          <span class="tag ${a ? "gr" : "or"}">${a ? a + " free" : "Full"}</span>
+        </div>`;
+
+      const bg = `<div class="ov"></div>`;
+
+      /* ==========================================================
+         THE 16 SCREENS
+         ========================================================== */
+      const F = [
+        /* 01 ------------------------------------------------------ */
+        [
+          "01 · Welcome / Sign-Up",
+          `
+          <div style="position:relative;z-index:1;padding:72px;display:flex;gap:80px;height:900px;align-items:center">
+            <div style="flex:1" class="col">
+              ${logo}
+              <div style="height:40px"></div>
+              <div class="h1">Real-time charging map for your seamless journey.</div>
+              <p class="m" style="max-width:480px;font-size:17px">
+                Live socket availability, queue times and battery status across Quezon City.
+              </p>
+              <div class="col" style="gap:14px;margin-top:20px">
+                ${[
+                  ["pin", "Live socket availability"],
+                  ["clock", "Accurate charging-time estimates"],
+                  ["gift", "Earn Watt Credits for check-ins"],
+                ]
+                  .map((x) => `<div class="row">${ic(x[0], 1)}<b>${x[1]}</b></div>`)
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="g" style="width:520px;padding:44px">
+              <div class="h2" style="font-size:30px">Create your account</div>
+              <div class="lbl">Email</div>
+              <div class="in">you@email.com</div>
+              <div class="lbl">Password</div>
+              <div class="in">••••••••••</div>
+              <div style="height:24px"></div>
+              <div class="btn w">Sign up</div>
+              <hr />
+              <div class="row">
+                <div class="btn o w">Google</div>
+                <div class="btn o w">Apple</div>
+              </div>
+              <p class="m" style="text-align:center;margin-top:20px">
+                Already have an account? <b style="color:var(--bl)">Log in</b>
+              </p>
+            </div>
+          </div>`,
+        ],
+
+        /* 02 ------------------------------------------------------ */
+        [
+          "02 · Vehicle Profile — Model",
+          `
+          ${nav("")}
+          <div class="main" style="gap:60px;padding-top:40px">
+            <div style="flex:1" class="col">
+              <span class="tag" style="align-self:flex-start">STEP 1 OF 2</span>
+              <div class="h2">Which EV do you drive?</div>
+              <div class="in">${I("search")} Search make, model, year</div>
+              <div class="lbl">Popular in Quezon City</div>
+              <div class="row" style="flex-wrap:wrap;gap:12px">
+                <span class="pill on">Hyundai Ioniq 5</span>
+                <span class="pill">Porsche Taycan</span>
+                <span class="pill">Tesla Model Y</span>
+                <span class="pill">BYD Seal</span>
+                <span class="pill">Kia EV6</span>
+              </div>
+            </div>
+
+            <div class="g" style="width:520px;height:500px">
+              <div class="car">
+                <svg style="width:160px;height:160px" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                     stroke-linejoin="round">${P.car}</svg>
+              </div>
+              <div class="h3" style="margin-top:24px">Hyundai Ioniq 5</div>
+              <div class="m">2025 · Selected</div>
+              <div class="btn w" style="margin-top:40px">Continue</div>
+            </div>
+          </div>`,
+        ],
+
+        /* 03 ------------------------------------------------------ */
+        [
+          "03 · Vehicle Specs Confirmation",
+          `
+          ${nav("")}
+          <div class="main" style="justify-content:center;padding-top:40px">
+            <div class="g col" style="width:640px;height:600px;padding:48px">
+              <span class="tag" style="align-self:flex-start">STEP 2 OF 2</span>
+              <div class="h2">Confirm your specs</div>
+              <p class="m">Auto-filled from Ioniq 5. Edit if your trim differs.</p>
+
+              <div>
+                <div class="lbl">Battery capacity</div>
+                <div class="in sb" style="justify-content:space-between">
+                  <b style="color:var(--ink)">77.4</b><span>kWh</span>
+                </div>
+              </div>
+
+              <div>
+                <div class="lbl">Max charging speed</div>
+                <div class="in" style="justify-content:space-between">
+                  <b style="color:var(--ink)">233</b><span>kW</span>
+                </div>
+              </div>
+
+              <div class="btn w" style="margin-top:auto">Save &amp; start charging</div>
+            </div>
+          </div>`,
+        ],
+
+        /* 04 ------------------------------------------------------ */
+        [
+          "04 · Homepage Map (Default)",
+          `
+          ${nav("Map")}
+          <div class="main" style="flex-direction:column;gap:20px">
+            <div class="row">
+              <div class="in" style="width:520px">${I("search")} EDSA, Katipunan, Eastwood…</div>
+              <span class="pill on">All</span>
+              <span class="pill">CCS2 DC</span>
+              <span class="pill">Type 2 AC</span>
+              <span class="pill">Free</span>
+              <span class="pill">Paid</span>
+            </div>
+
+            <div class="map">
+              <span class="pin or" style="left:260px;top:160px">${I("bolt")}1/4</span>
+              <span class="pin yl" style="left:640px;top:300px">${I("bolt")}4/6</span>
+              <span class="pin rd" style="left:980px;top:170px">${I("bolt")}0/3</span>
+              <span class="pin ok" style="left:420px;top:430px">${I("bolt")}2/2</span>
+              <span class="pin or" style="left:1100px;top:440px">${I("bolt")}3/8</span>
+            </div>
+          </div>`,
+        ],
+
+        /* 05 ------------------------------------------------------ */
+        [
+          "05 · Map (Active Search / Filtered)",
+          `
+          ${nav("Map")}
+          <div class="main">
+            <div class="map">
+              <span class="pin" style="left:300px;top:200px">${I("bolt")}4 free</span>
+              <span class="pin" style="left:560px;top:420px">${I("bolt")}2 free</span>
+              <div class="g row" style="position:absolute;left:32px;top:32px;padding:14px 22px;border-radius:999px">
+                <span class="pill on">CCS2 DC</span>
+                <span class="pill">Free</span>
+              </div>
+            </div>
+
+            <div class="col" style="width:460px;gap:16px">
+              <div class="h3">Nearby hubs</div>
+              ${hub("UP Town Center", "0.8 km", "4", "₱26/kWh", "CCS2")}
+              ${hub("Eastwood Mall", "3.1 km", "2", "Free", "Type 2")}
+              ${hub("SM North EDSA", "4.4 km", "1", "₱24/kWh", "CCS2")}
+            </div>
+          </div>`,
+        ],
+
+        /* 06 ------------------------------------------------------ */
+        [
+          "06 · Station Directory / List",
+          `
+          ${nav("Stations")}
+          <div class="main" style="flex-direction:column;gap:20px">
+            <div class="row sb">
+              <div class="h2">All stations</div>
+              <div class="row" style="gap:10px">
+                <span class="pill on">Nearest</span>
+                <span class="pill">Availability</span>
+                <span class="pill">Lowest price</span>
+              </div>
+            </div>
+            ${hub("UP Town Center", "0.8 km", "4", "₱26/kWh", "CCS2 · Type 2")}
+            ${hub("Eastwood Mall", "3.1 km", "2", "Free", "Type 2")}
+            ${hub("SM North EDSA", "4.4 km", "1", "₱24/kWh", "CCS2")}
+            ${hub("Trinoma", "5.0 km", "0", "₱28/kWh", "CCS2")}
+            ${hub("Katipunan Hub", "2.2 km", "3", "₱25/kWh", "CCS2")}
+          </div>`,
+        ],
+
+        /* 07 ------------------------------------------------------ */
+        [
+          "07 · Station Detail",
+          `
+          ${nav("Stations")}
+          <div class="main" style="flex-direction:column;gap:24px">
+            <div class="row sb">
+              <div>
+                <span class="tag">KATIPUNAN</span>
+                <div class="h1" style="font-size:48px;margin:12px 0">UP Town Center</div>
+                <p class="m">Katipunan Ave, Diliman, Quezon City · Open 24/7</p>
+              </div>
+              <div class="row">
+                ${stat("bolt", "Pricing", "₱26 / kWh")}
+                ${stat("plug", "Live status", "4 free")}
+              </div>
+            </div>
+
+            <div class="dk lv-yl row sb" style="padding:30px 36px">
+              <div>
+                <div class="h3">4 of 6 sockets free right now</div>
+                <div class="m">Updated 12 seconds ago</div>
+              </div>
+              <div class="btn">Check in</div>
+            </div>
+
+            <div class="row" style="gap:20px">
+              ${stat("plug", "CCS2 DC", "150 kW ×2")}
+              ${stat("plug", "CCS2 DC", "60 kW ×2")}
+              ${stat("plug", "Type 2 AC", "22 kW ×2")}
+            </div>
+          </div>`,
+        ],
+
+        /* 08 ------------------------------------------------------ */
+        [
+          "08 · Socket Telemetry Cards",
+          `
+          ${nav("Stations")}
+          <div class="main" style="flex-direction:column">
+            <div class="h2">Dynamic socket telemetry</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:10px">
+              ${port(1, "CCS2 DC", 150)}
+              ${port(2, "CCS2 DC", 150)}
+              ${port(3, "CCS2 DC", 60, 99)}
+              ${port(4, "Type 2 AC", 22)}
+            </div>
+          </div>`,
+        ],
+
+        /* 09 ------------------------------------------------------ */
+        [
+          "09 · Check-In & Battery Calculator",
+          `
+          ${nav("Stations")}
+          ${bg}
+          <div class="g modal">
+            <div class="row">
+              <div class="ic">${I("bolt")}</div>
+              <div>
+                <div class="h3">Check in at Port #1</div>
+                <div class="m">UP Town Center · CCS2 DC 150 kW</div>
+              </div>
+            </div>
+
+            <div class="lbl" style="margin-top:32px">Starting battery</div>
+            <div class="bar"><i style="width:20%"></i></div>
+            <b>20%</b>
+
+            <div class="lbl" style="margin-top:24px">Target charge</div>
+            <div class="bar"><i style="width:80%"></i></div>
+            <b>80%</b>
+
+            <div class="dk row sb" style="margin:28px 0">
+              <div>
+                <div class="m" style="color:#fff;font-weight:500">Estimated completion</div>
+                <div class="h2" style="color:#fff">24 min</div>
+              </div>
+              ${ic("clock")}
+            </div>
+
+            <div class="btn w">Start check-in</div>
+          </div>`,
+        ],
+
+        /* 10 ------------------------------------------------------ */
+        [
+          "10 · Report an Issue",
+          `
+          ${nav("Stations")}
+          ${bg}
+          <div class="g modal col" style="gap:14px">
+            <div class="h3">Report a problem</div>
+            <p class="m">Help keep live data reliable for everyone.</p>
+            <div class="opt sel">${ic("plug", "s")} Broken plug</div>
+            <div class="opt">${ic("bolt", "s")} Power outage</div>
+            <div class="opt">${ic("flag", "s")} Incorrect status</div>
+            <div class="in" style="height:90px;align-items:flex-start">Add details (optional)</div>
+            <div class="btn w">Submit report</div>
+          </div>`,
+        ],
+
+        /* 11 ------------------------------------------------------ */
+        [
+          "11 · Smart Reservation / Checkout",
+          `
+          ${nav("Stations")}
+          <div class="main">
+            <div class="col" style="flex:1">
+              <div class="row sb">
+                <div class="h2">Checkout</div>
+                <span class="pill">${I("clock")} Slot held · 13:45</span>
+              </div>
+
+              <div class="g col" style="gap:14px">
+                <b>UP Town Center</b>
+                <div class="m">Socket #1 · CCS2 DC 150 kW</div>
+                <hr style="margin:4px 0" />
+                <b>Hyundai Ioniq 5</b>
+                <div class="m">Target 20% → 80% · 46.4 kWh</div>
+              </div>
+            </div>
+
+            <div class="dk col" style="width:520px;gap:18px;height:600px">
+              <div class="h3">Itemized bill</div>
+
+              <div class="row sb">
+                <span class="m">Charging fee (46.4 kWh × ₱26)</span>
+                <b>₱1,206.40</b>
+              </div>
+              <div class="row sb">
+                <span class="m">Slot reservation fee</span>
+                <b>₱50.00</b>
+              </div>
+              <div class="row sb">
+                <span class="m">Refundable overstay deposit</span>
+                <b>₱100.00</b>
+              </div>
+
+              <hr style="border-color:#2b2e44" />
+
+              <div class="row sb">
+                <span class="m">Total due today</span>
+                <span class="h2" style="color:#fff">₱1,356.40</span>
+              </div>
+
+              <div class="btn w" style="margin-top:auto">Continue to payment</div>
+            </div>
+          </div>`,
+        ],
+
+        /* 12 ------------------------------------------------------ */
+        [
+          "12 · Payment Channel",
+          `
+          ${nav("Stations")}
+          ${bg}
+          <div class="g modal col" style="gap:14px">
+            <div class="h3">Choose payment</div>
+            ${["GCash", "Maya Wallet", "Credit / Debit card", "Watt Credits"]
+              .map(
+                (x, i) => `
+                <div class="opt ${i == 2 ? "sel" : ""}">
+                  ${ic(i == 3 ? "bolt" : "card", "s")}${x}
+                </div>`
+              )
+              .join("")}
+            <hr />
+            <div class="row sb">
+              <span class="m">Amount due today</span>
+              <span class="h2">₱1,356.40</span>
+            </div>
+            <div class="btn w">Pay securely</div>
+          </div>`,
+        ],
+
+        /* 13 ------------------------------------------------------ */
+        [
+          "13 · Active Charging Session",
+          `
+          ${nav("Sessions")}
+          <div class="main">
+            <div class="g ctr col" style="flex:1">
+              <svg width="320" height="320" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="#e4e5f0" stroke-width="8" />
+                <circle cx="60" cy="60" r="50" fill="none" stroke="#4a6886" stroke-width="8"
+                        stroke-linecap="round" stroke-dasharray="201 314"
+                        transform="rotate(-90 60 60)" />
+                <text x="60" y="68" text-anchor="middle" font-size="26"
+                      font-weight="600" fill="#12131f">64%</text>
+              </svg>
+              <div class="m">Charging · Port #1</div>
+            </div>
+
+            <div class="col" style="width:460px">
+              ${stat("clock", "Time remaining", "11 min")}
+              ${stat("bolt", "Charging rate", "148 kW")}
+              <div class="g row" style="padding:22px;background:#fdf1e0">
+                ${ic("alert")}
+                <div><b>Idle fees begin 10 min after completion</b></div>
+              </div>
+              <div class="btn w">Extend session</div>
+              <div class="btn o w">Stop charging</div>
+            </div>
+          </div>`,
+        ],
+
+        /* 14 ------------------------------------------------------ */
+        [
+          "14 · Receipt & Rating",
+          `
+          ${nav("Sessions")}
+          <div class="main" style="justify-content:center">
+            <div class="g col" style="width:520px">
+              <span class="ic">${I("check")}</span>
+              <div class="h2">Session complete</div>
+
+              <div class="row sb">
+                <span class="m">Energy delivered</span><b>46.4 kWh</b>
+              </div>
+              <div class="row sb">
+                <span class="m">Total paid</span><b>₱1,256.40</b>
+              </div>
+              <div class="row sb">
+                <span class="m">Deposit refunded</span><b>₱100.00</b>
+              </div>
+
+              <hr style="margin:0" />
+
+              <b>Rate station accuracy</b>
+              <div class="row" style="gap:8px;color:var(--bl)">
+                ${I("star").repeat(4)}${I("star")}
+              </div>
+
+              <div class="dk row sb" style="padding:20px 26px">
+                <b>+120 Watt points</b>
+                ${ic("gift", "s")}
+              </div>
+
+              <div class="btn w">Download receipt</div>
+            </div>
+          </div>`,
+        ],
+
+        /* 15 ------------------------------------------------------ */
+        [
+          "15 · Profile & Wallet",
+          `
+          ${nav("Wallet")}
+          <div class="main">
+            <div class="col" style="width:440px">
+              <div class="g row">
+                ${ic("user")}
+                <div>
+                  <div class="h3">Alex Reyes</div>
+                  <div class="m">Free plan</div>
+                </div>
+              </div>
+
+              <div class="dk">
+                <div class="m">Watt Credits</div>
+                <div class="h1" style="font-size:52px">1,240</div>
+              </div>
+
+              <div class="g row">
+                ${ic("car", "s")}
+                <b>Hyundai Ioniq 5</b>
+              </div>
+            </div>
+
+            <div class="col" style="flex:1">
+              <div class="h2">Recent activity</div>
+              ${[
+                ["UP Town Center", "Oct 1", "−₱1,256"],
+                ["Eastwood Mall", "Sep 27", "Free"],
+                ["Watt points bonus", "Sep 27", "+120"],
+              ]
+                .map(
+                  (r) => `
+                  <div class="g row sb" style="padding:22px 28px;border-radius:24px">
+                    <b>${r[0]}</b>
+                    <span class="m">${r[1]}</span>
+                    <b>${r[2]}</b>
+                  </div>`
+                )
+                .join("")}
+              <div class="row">
+                <span class="pill">${I("card")} GCash</span>
+                <span class="pill">${I("card")} Visa ••42</span>
+              </div>
+            </div>
+          </div>`,
+        ],
+
+        /* 16 ------------------------------------------------------ */
+        [
+          "16 · Subscription Tiers",
+          `
+          ${nav("Premium")}
+          <div class="main" style="flex-direction:column;align-items:center">
+            <div class="h2">Charge smarter with Premium</div>
+
+            <div class="row" style="margin:10px 0">
+              <span class="pill on">Monthly</span>
+              <span class="pill">Annual · save 20%</span>
+            </div>
+
+            <div class="row" style="align-items:stretch;gap:28px">
+              <div class="g col" style="width:440px">
+                <div class="h3">Free</div>
+                <div class="h2">₱0</div>
+                <div class="m">Live map · Check-in · Reports</div>
+              </div>
+
+              <div class="dk col" style="width:440px;gap:16px">
+                <div class="h3">Premium Pass</div>
+                <div class="h2" style="color:#fff">₱199<span class="m">/mo</span></div>
+                <div class="row">${ic("check", "s")}Ad-free routing</div>
+                <div class="row">${ic("clock", "s")}Priority queue alerts</div>
+                <div class="row">${ic("bolt", "s")}Discounted charging rates</div>
+                <div class="btn w" style="margin-top:12px">Upgrade</div>
+              </div>
+            </div>
+          </div>`,
+        ],
+      ];
+
+      /* ==========================================================
+         RENDER — scales each 1440×900 frame to fit the window
+         ========================================================== */
+      const b = document.getElementById("b");
+
+      function draw() {
+        const s = Math.min(1, (innerWidth - 32) / 1440);
+
+        b.innerHTML = F.map(
+          (f, k) => `
+          <div class="lab" style="--w:${1440 * s}px">${f[0]}</div>
+
+          <div class="wrap" style="--w:${1440 * s}px;--h:${900 * s}px">
+            <div class="fr" style="--s:${s}">
+              <div class="deco">
+                <i class="sp" style="right:${60 + (k % 4) * 110}px;top:${70 + (k % 3) * 40}px"></i>
+                <i class="tl" style="left:${30 + (k % 3) * 170}px;bottom:${30 + (k % 2) * 50}px"></i>
+                <i class="pl" style="right:${380 + (k % 3) * 90}px;bottom:${20 + (k % 4) * 20}px"></i>
+              </div>
+              ${f[1]}
+            </div>
+          </div>`
+        ).join("");
+      }
+
+      draw();
+      addEventListener("resize", draw);
+    </script>
+  </body>
+</html>
