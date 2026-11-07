@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WattSpot — Map</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="map.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">WattSpot</div>
+      <nav class="topbar-links">
+        <a href="map.html">Map</a>
+        <a href="directory.html">Stations</a>
+      </nav>
+    </header>
+
+    <main class="map-container">
+      <!-- Search Bar -->
+      <div class="search-overlay">
+        <!-- Removed glass-card, added search-input -->
+        <input id="search-box" class="search-input" type="search" placeholder="Search EDSA, Katipunan..." />
+      </div>
+
+      <!-- Hidden Sidebar -->
+      <aside id="nearby-sidebar" class="sidebar hidden">
+        <h3 style="color: white; margin-top: 0;">Nearby hubs</h3>
+        <ul id="search-results" style="list-style: none; padding: 0; margin: 0;"></ul>
+      </aside>
+    </main>
+  </body>
+</html>

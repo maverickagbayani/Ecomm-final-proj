@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WattSpot — Which EV do you drive?</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="setup-model.js" defer></script>
+  </head>
+  <body>
+    <!-- Topbar Navigation -->
+    <header class="topbar">
+      <div class="logo">WattSpot</div>
+      <div class="topbar-links" style="color: white;">Step 1 of 2</div>
+    </header>
+
+    <main style="padding: 40px; max-width: 800px; margin: 50px auto;">
+      <h1 style="color: white; font-size: 2.5rem;">Which EV do you drive?</h1>
+      
+      <!-- Reusing the search-input class from map fix -->
+      <input id="car-search" class="search-input" style="width: 100%; margin-bottom: 20px;" type="search" placeholder="Search make, model, year..." />
+      
+      <!-- The list where search results will render -->
+      <ul id="car-list" style="list-style: none; padding: 0;"></ul>
+    </main>
+  </body>
+</html>
