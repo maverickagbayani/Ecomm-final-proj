@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Report an issue · WattSpot</title>
+</head>
+<body>
+<nav id="nav"></nav>
+<main>
+  <h1>Report an issue</h1>
+  <p>Tell the station owner about a broken charger or a maintenance problem.</p>
+  <form id="f" novalidate>
+    <p><label for="station">Station</label><br><select id="station"><option>Loading stations…</option></select></p>
+    <p><label for="type">Issue type</label><br>
+      <select id="type">
+        <option>Broken charger</option>
+        <option>Socket blocked</option>
+        <option>Payment problem</option>
+        <option>Station closed</option>
+        <option>Other</option>
+      </select></p>
+    <p><label for="desc">What happened? (10 to 500 characters)</label><br><textarea id="desc" rows="5" cols="40" maxlength="500"></textarea></p>
+    <p><label for="name">Your name (optional)</label><br><input id="name" type="text"></p>
+    <p><label for="email">Your email (optional)</label><br><input id="email" type="email"></p>
+    <button type="submit" id="send">Send report</button>
+  </form>
+  <div id="message" role="alert" hidden></div>
+</main>
+<script src="app.js"></script>
+<script src="report.js"></script>
+</body>
+</html>

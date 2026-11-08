@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WattSpot — All Stations</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="directory.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">WattSpot</div>
+      <nav class="topbar-links">
+        <a href="map.html">Map</a>
+        <a href="directory.html">Stations</a>
+      </nav>
+    </header>
+
+    <main style="padding: 40px; max-width: 800px; margin: 0 auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h1 style="color: white;">All stations</h1>
+        
+        <div>
+          <!-- Sort buttons -->
+          <button id="sort-nearest" class="primary-btn" style="width: auto; margin: 0 5px;">Nearest</button>
+          <button id="sort-avail" class="primary-btn" style="width: auto; margin: 0 5px;">Availability</button>
+          <button id="sort-price" class="primary-btn" style="width: auto; margin: 0 5px;">Lowest price</button>
+        </div>
+      </div>
+
+      <ul id="station-list" style="list-style: none; padding: 0;"></ul>
+    </main>
+  </body>
+</html>

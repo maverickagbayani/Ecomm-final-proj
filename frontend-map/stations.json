@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "name": "UP Town Center",
+    "location": { "type": "Point", "coordinates": [121.0733, 14.6537] },
+    "freeSockets": 4,
+    "totalSockets": 6,
+    "connectors": ["CCS2", "Type2"],
+    "pricing": "PAID",
+    "pricePerKwh": 26
+  },
+  {
+    "id": 2,
+    "name": "SM North EDSA",
+    "location": { "type": "Point", "coordinates": [121.0305, 14.6565] },
+    "freeSockets": 1,
+    "totalSockets": 4,
+    "connectors": ["CCS2"],
+    "pricing": "PAID",
+    "pricePerKwh": 24
+  },
+  {
+    "id": 3,
+    "name": "Eastwood Mall",
+    "location": { "type": "Point", "coordinates": [121.0803, 14.6097] },
+    "freeSockets": 2,
+    "totalSockets": 2,
+    "connectors": ["Type2"],
+    "pricing": "FREE",
+    "pricePerKwh": 0
+  },
+  {
+    "id": 4,
+    "name": "Trinoma",
+    "location": { "type": "Point", "coordinates": [121.0334, 14.6546] },
+    "freeSockets": 0,
+    "totalSockets": 3,
+    "connectors": ["CCS2"],
+    "pricing": "PAID",
+    "pricePerKwh": 28
+  },
+  {
+    "id": 5,
+    "name": "Katipunan Hub",
+    "location": { "type": "Point", "coordinates": [121.0750, 14.6400] },
+    "freeSockets": 3,
+    "totalSockets": 4,
+    "connectors": ["CCS2"],
+    "pricing": "PAID",
+    "pricePerKwh": 25
+  },
+  {
+    "id": 6,
+    "name": "Ayala Malls Cloverleaf",
+    "location": { "type": "Point", "coordinates": [121.0036, 14.6573] },
+    "freeSockets": 2,
+    "totalSockets": 5,
+    "connectors": ["CCS2", "Type2"],
+    "pricing": "PAID",
+    "pricePerKwh": 27
+  },
+  {
+    "id": 7,
+    "name": "Gateway Mall",
+    "location": { "type": "Point", "coordinates": [121.0534, 14.6209] },
+    "freeSockets": 5,
+    "totalSockets": 6,
+    "connectors": ["Type2"],
+    "pricing": "FREE",
+    "pricePerKwh": 0
+  },
+  {
+    "id": 8,
+    "name": "Fairview Terraces",
+    "location": { "type": "Point", "coordinates": [121.0589, 14.7345] },
+    "freeSockets": 0,
+    "totalSockets": 2,
+    "connectors": ["CCS2"],
+    "pricing": "PAID",
+    "pricePerKwh": 30
+  }
+]

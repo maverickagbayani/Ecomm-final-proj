@@ -5,18 +5,18 @@ const fs = require('fs');
 const app = express();
 
 app.use(express.json());
+app.use(express.static(__dirname));
 app.use(express.static('public'));
 
-// Serve legacy team folders
 for (const dir of ['home', 'shop', 'checkout', 'owner']) {
   const full = path.join(__dirname, dir);
   if (fs.existsSync(full)) app.use('/' + dir, express.static(full));
 }
 
-// Serve Maxine's front end at /app and redirect root to her home page
 const FRONT = path.join(__dirname, 'front end - max');
 if (fs.existsSync(FRONT)) {
   app.use('/app', express.static(FRONT));
+  app.use('/front end - max', express.static(FRONT));
   app.get('/', (req, res) => res.redirect('/app/index.html'));
 } else {
   app.get('/', (req, res) => res.redirect('/shop/stations.html'));

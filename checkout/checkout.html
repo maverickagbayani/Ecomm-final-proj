@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Checkout · WattSpot</title>
+</head>
+<body>
+<nav id="nav"></nav>
+
+<div>
+  <form id="f" novalidate>
+    <div><h2>Checkout</h2><span>Slot held</span></div>
+    <div>
+      <div id="sel">Loading your selection…</div>
+      <a href="/shop/cart.html">Change selection</a>
+      <select id="socket" hidden></select><input id="kwh" type="hidden">
+      <label for="name">Full name</label>
+      <input id="name" type="text" autocomplete="name" required>
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="email" required>
+    </div>
+    <div id="message" role="alert" hidden></div>
+  </form>
+
+  <div>
+    <h3>Itemized bill</h3>
+    <div id="sum-name"></div>
+    <div><span id="l-charge">Charging fee</span><b id="a-charge">₱0.00</b></div>
+    <div><span>Slot reservation fee</span><b id="a-res">₱50.00</b></div>
+    <div><span>Refundable overstay deposit</span><b id="a-dep">₱100.00</b></div>
+    <hr>
+    <div><span>Total due today</span><span id="total">₱0.00</span></div>
+    <button type="button" id="go">Continue to payment</button>
+  </div>
+</div>
+
+<div id="modal" role="dialog" aria-labelledby="pay-title" hidden>
+  <h3 id="pay-title">Choose payment</h3>
+  <button type="button" data-m="GCash" aria-pressed="false">GCash</button>
+  <button type="button" data-m="Maya Wallet" aria-pressed="false">Maya Wallet</button>
+  <button type="button" data-m="Card" aria-pressed="true">Credit / Debit card</button>
+  <button type="button" data-m="Watt Credits" aria-pressed="false">Watt Credits</button>
+  <hr>
+  <div><span>Amount due today</span><span id="total2">₱0.00</span></div>
+  <div id="chosen">Selected: Card</div>
+  <div id="pay-error" role="alert" hidden></div>
+  <button type="button" id="pay">Pay securely</button>
+  <button type="button" id="cancel">Back to bill</button>
+</div>
+
+<script src="app.js"></script>
+<script src="checkout.js"></script>
+</body>
+</html>

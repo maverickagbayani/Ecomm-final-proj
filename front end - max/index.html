@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WattSpot — Welcome</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="auth.js" defer></script>
+  </head>
+  <body>
+    <main class="welcome-container">
+      <div class="hero-text">
+        <h1>Real-time charging map for your seamless journey.</h1>
+        <p>Find and reserve a free EV charging socket in Quezon City before you arrive.</p>
+        <button onclick="window.location.href='directory.html'" class="primary-btn" style="margin-top: 15px;">Browse stations</button>
+      </div>
+
+      <div class="glass-card">
+        <h2>Create your account</h2>
+        
+        <p id="status-line" class="muted"></p> 
+
+        <label for="email-box">Email</label>
+        <input id="email-box" type="email" placeholder="you@email.com" />
+
+        <label for="password-box">Password</label>
+        <input id="password-box" type="password" placeholder="••••••••" />
+
+        <button id="signup-btn" class="primary-btn">Sign up</button>
+      </div>
+    </main>
+    <script src="home-connect.js" defer></script>
+  </body>
+</html>

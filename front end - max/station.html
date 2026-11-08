@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WattSpot — UP Town Center</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="station.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="logo">WattSpot</div>
+      <nav class="topbar-links">
+        <a href="map.html">Map</a>
+        <a href="directory.html">Stations</a>
+      </nav>
+    </header>
+
+    <main style="padding: 40px; max-width: 1000px; margin: 0 auto;">
+      <h1 style="color: white;">UP Town Center</h1>
+      <p style="color: white;">Katipunan Ave, Diliman, Quezon City</p>
+
+      <div class="telemetry-grid">
+        <!-- Socket Card -->
+        <div class="glass-card">
+          <h3>Port #1 (CCS2 DC)</h3>
+          <p class="muted">Available</p>
+          <button id="checkin-btn" class="primary-btn">Book socket</button>
+        </div>
+        <div class="glass-card">
+          <h3>Port #2 (CCS2 DC)</h3>
+          <p class="muted">In Use — 4 min left</p>
+        </div>
+      </div>
+      
+      <br>
+      <button id="report-btn" class="primary-btn" style="width: 200px;">Report an issue</button>
+    </main>
+
+    <!-- HIDDEN MODALS -->
+    
+    <!-- Check-In Battery Calculator -->
+    <div id="checkin-modal" class="modal-overlay hidden">
+      <div class="glass-card">
+        <h2>Check in at Port #1</h2>
+        <label for="target-charge">Target Charge (%)</label>
+        <input id="target-charge" type="number" value="80" />
+        <h1 id="estimated-time">24 min</h1>
+        <button id="start-charge-btn" class="primary-btn">Start check-in</button>
+        <button class="close-modal primary-btn" style="background: transparent; color: white;">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Report Issue Modal -->
+    <div id="report-modal" class="modal-overlay hidden">
+      <div class="glass-card">
+        <h2>Report a problem</h2>
+        <button class="primary-btn">Broken plug</button>
+        <button class="primary-btn">Power outage</button>
+        <button class="close-modal primary-btn" style="background: transparent; color: white;">Cancel</button>
+      </div>
+    </div>
+  </body>
+</html>
