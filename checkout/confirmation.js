@@ -33,7 +33,7 @@ if (!orderId) {
         </div>
         <div>
           <button type="button" onclick="window.print()">Download receipt</button>
-          <a href="/shop/stations.html">Book another socket</a>
+          <a href="/app/directory.html">Book another socket</a>
         </div>`;
     })
     .catch(err => {
