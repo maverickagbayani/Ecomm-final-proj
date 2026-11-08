@@ -2,7 +2,7 @@ nav('cart');
 (async () => {
   const box = $('box'), c = cart.get();
   if (!c) {
-    box.innerHTML = '<h3>Nothing selected yet</h3><div>Choose a station and a time slot to start.</div><a href="stations.html">Browse stations</a>';
+    box.innerHTML = '<h3>Nothing selected yet</h3><div>Choose a station and a time slot to start.</div><a href="/app/directory.html">Browse stations</a>';
     return;
   }
   let p;
@@ -12,7 +12,7 @@ nav('cart');
     p = await r.json();
   } catch (e) {
     cart.clear();
-    box.innerHTML = '<h3>That station is no longer available</h3><a href="stations.html">Browse stations</a>';
+    box.innerHTML = '<h3>That station is no longer available</h3><a href="/app/directory.html">Browse stations</a>';
     return;
   }
   const b = billFor(p, c.kwh), full = p.stock < 1;
@@ -26,7 +26,7 @@ nav('cart');
     <hr>
     <div><span>Total price</span><span>${peso(b.total)}</span></div>
     ${full ? '<div role="alert">This station is now full. Choose another station.</div>' : ''}
-    <a href="${full ? 'stations.html' : '/checkout/checkout.html'}">${full ? 'Choose another station' : 'Proceed to checkout'}</a>
+    <a href="${full ? '/app/directory.html' : '/checkout/checkout.html'}">${full ? 'Choose another station' : 'Proceed to checkout'}</a>
     <a href="station.html?id=${p.id}">Change selection</a>
     <button type="button" id="rm">Remove selection</button>`;
   $('rm').addEventListener('click', () => { cart.clear(); window.location.reload(); });
