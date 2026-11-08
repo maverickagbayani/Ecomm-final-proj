@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WattSpot — Map</title>
+
+    <!-- Mapbox map library -->
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- ===== NAV ===== -->
+    <header class="nav">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        WattSpot
+      </div>
+
+      <a class="on">Map</a>
+      <a>Stations</a>
+      <a>Sessions</a>
+      <a>Wallet</a>
+      <a>Premium</a>
+
+      <span class="spacer"></span>
+
+      <span class="pill">🚗 Ioniq 5</span>
+    </header>
+
+    <!-- ===== MAIN ===== -->
+    <main class="layout">
+      <!-- LEFT: search, filter chips, map -->
+      <section class="left">
+        <div class="toolbar">
+          <label class="search">
+            <span>🔍</span>
+            <input id="search" type="text" placeholder="EDSA, Katipunan, Eastwood…" />
+          </label>
+
+          <div class="chips" id="chips">
+            <button class="pill on" data-group="all">All</button>
+            <button class="pill" data-group="connector" data-value="CCS2">CCS2 DC</button>
+            <button class="pill" data-group="connector" data-value="Type2">Type 2 AC</button>
+            <button class="pill" data-group="pricing" data-value="FREE">Free</button>
+            <button class="pill" data-group="pricing" data-value="PAID">Paid</button>
+          </div>
+        </div>
+
+        <div class="map-wrap">
+          <div id="map"></div>
+
+          <!-- Shown if the Mapbox token is missing -->
+          <div id="notice" class="notice" hidden></div>
+
+          <!-- Bottom sheet: opens when a pin or a card is tapped -->
+          <aside id="sheet" class="sheet" hidden></aside>
+        </div>
+      </section>
+
+      <!-- RIGHT: nearby hubs list -->
+      <aside class="right">
+        <h2>Nearby hubs</h2>
+        <div id="list" class="list"></div>
+      </aside>
+    </main>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    <!-- config.js is YOUR private file (see config.example.js) -->
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
