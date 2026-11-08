@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Owner Dashboard · WattSpot</title>
+</head>
+<body>
+<nav id="nav"></nav>
+
+<div>
+  <div>
+    <h2>Owner dashboard</h2>
+    <div><span id="updated"></span><button id="refresh" type="button">Refresh</button></div>
+  </div>
+
+  <div aria-live="polite">
+    <div><span>Total orders</span><span id="m-orders">–</span></div>
+    <div><span>Total revenue</span><span id="m-revenue">–</span></div>
+    <div><span>Average order value</span><span id="m-aov">–</span></div>
+    <div><span>Top-selling station</span><span id="m-top">–</span><span id="m-top-sub"></span></div>
+    <div><span>Low stock (under 5 open slots)</span><ul id="m-low"><li>–</li></ul></div>
+  </div>
+
+  <div>
+    <h3>All bookings</h3>
+    <div>
+      <table>
+        <thead><tr><th>Order</th><th>Customer</th><th>Email</th><th>Station</th><th>kWh</th><th>Payment</th><th>Total</th><th>Date</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="8">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="owner.js"></script>
+</body>
+</html>
