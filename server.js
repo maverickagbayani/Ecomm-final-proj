@@ -1,12 +1,26 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 
 app.use(express.json());
 app.use(express.static('public'));
-app.use('/shop', express.static(path.join(__dirname, 'shop')));
-app.get('/', (req, res) => res.redirect('/shop/stations.html'));
+
+// Serve legacy team folders
+for (const dir of ['home', 'shop', 'checkout', 'owner']) {
+  const full = path.join(__dirname, dir);
+  if (fs.existsSync(full)) app.use('/' + dir, express.static(full));
+}
+
+// Serve Maxine's front end at /app and redirect root to her home page
+const FRONT = path.join(__dirname, 'front end - max');
+if (fs.existsSync(FRONT)) {
+  app.use('/app', express.static(FRONT));
+  app.get('/', (req, res) => res.redirect('/app/index.html'));
+} else {
+  app.get('/', (req, res) => res.redirect('/shop/stations.html'));
+}
 
 const PORT = process.env.PORT || 3000;
 
@@ -14,7 +28,6 @@ const RESERVATION_FEE = 50;
 const DEPOSIT = 100;
 const PAYMENT_METHODS = ['GCash', 'Maya Wallet', 'Card', 'Watt Credits'];
 
-// Mock database: each "product" is a charging socket. stock = free sockets.
 let products = [
   { id: 1, name: "UP Town Center · Socket #1", address: "UP Town Center, Katipunan Avenue, Diliman, Quezon City", connector: "Type 2 AC", power_kw: 22, hours: "Daily 10:00 AM to 9:00 PM", description: "Mall parking charger. Sample listing for the GC2 demo.", price_per_kwh: 26, stock: 4 },
   { id: 2, name: "Eastwood Mall · Socket #1", address: "Eastwood Mall, Eastwood City, Libis, Quezon City", connector: "CCS2 DC", power_kw: 50, hours: "Daily 10:00 AM to 10:00 PM", description: "Free charging promo with a reservation fee. Sample listing for the GC2 demo.", price_per_kwh: 0, stock: 2 },
@@ -23,21 +36,18 @@ let products = [
 
 let orders = [];
 
-// 1. GET /api/products (List & search)
 app.get('/api/products', (req, res) => {
   const q = req.query.q ? req.query.q.toLowerCase() : '';
   const filtered = products.filter(p => p.name.toLowerCase().includes(q));
   res.status(200).json(filtered);
 });
 
-// 2. GET /api/products/:id (Detail)
 app.get('/api/products/:id', (req, res) => {
   const product = products.find(p => p.id === parseInt(req.params.id));
   if (!product) return res.status(404).json({ error: "Product not found" });
   res.status(200).json(product);
 });
 
-// 3. POST /api/orders (reservation checkout with server-side billing)
 app.post('/api/orders', (req, res) => {
   const { customer_name, customer_email, payment_method, product_id, kwh, slot_start } = req.body;
 
@@ -79,19 +89,16 @@ app.post('/api/orders', (req, res) => {
   res.status(201).json(order);
 });
 
-// 4. GET /api/orders (all placed bookings, newest first)
 app.get('/api/orders', (req, res) => {
   res.status(200).json([...orders].reverse());
 });
 
-// 5. GET /api/metrics (owner dashboard)
 app.get('/api/metrics', (req, res) => {
   const round = n => Math.round(n * 100) / 100;
   const totalOrders = orders.length;
   const totalRevenue = round(orders.reduce((sum, o) => sum + o.total, 0));
   const averageOrderValue = totalOrders ? round(totalRevenue / totalOrders) : 0;
 
-  // Top-selling station: most bookings, ties broken by total kWh
   const byStation = {};
   for (const o of orders) {
     const s = byStation[o.socket] || (byStation[o.socket] = { name: o.socket, orders: 0, kwh: 0 });
@@ -100,7 +107,6 @@ app.get('/api/metrics', (req, res) => {
   }
   const ranked = Object.values(byStation).sort((a, b) => b.orders - a.orders || b.kwh - a.kwh);
 
-  // Low stock: stations with fewer than 5 open slots
   const lowStock = products
     .filter(p => p.stock < 5)
     .map(p => ({ id: p.id, name: p.name, available_slots: p.stock }));
@@ -114,7 +120,50 @@ app.get('/api/metrics', (req, res) => {
   });
 });
 
-// 6. GET /api/orders/:id (Read saved order by ID)
+const ISSUE_TYPES = ['Broken charger', 'Socket blocked', 'Payment problem', 'Station closed', 'Other'];
+let reports = [];
+
+app.post('/api/reports', (req, res) => {
+  const { station_id, issue_type, description, reporter_name, reporter_email } = req.body;
+  if (!station_id || !issue_type || !description)
+    return res.status(400).json({ error: "Station, issue type, and description are required" });
+  if (!ISSUE_TYPES.includes(issue_type))
+    return res.status(400).json({ error: "Invalid issue type" });
+  const text = String(description).trim();
+  if (text.length < 10 || text.length > 500)
+    return res.status(400).json({ error: "Description must be 10 to 500 characters" });
+  if (reporter_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reporter_email))
+    return res.status(400).json({ error: "Enter a valid email address" });
+  const station = products.find(p => p.id === parseInt(station_id));
+  if (!station) return res.status(404).json({ error: "Station not found" });
+
+  const report = {
+    id: reports.length + 1,
+    station_id: station.id,
+    station: station.name,
+    issue_type,
+    description: text,
+    reporter_name: reporter_name ? String(reporter_name).trim() : '',
+    reporter_email: reporter_email || '',
+    status: 'open',
+    createdAt: new Date().toISOString()
+  };
+  reports.push(report);
+  res.status(201).json(report);
+});
+
+app.get('/api/reports', (req, res) => {
+  res.status(200).json([...reports].reverse());
+});
+
+app.patch('/api/reports/:id/resolve', (req, res) => {
+  const report = reports.find(r => r.id === parseInt(req.params.id));
+  if (!report) return res.status(404).json({ error: "Report not found" });
+  report.status = 'resolved';
+  report.resolvedAt = new Date().toISOString();
+  res.status(200).json(report);
+});
+
 app.get('/api/orders/:id', (req, res) => {
   const order = orders.find(o => o.id === parseInt(req.params.id));
   if (!order) return res.status(404).json({ error: "Order not found" });
