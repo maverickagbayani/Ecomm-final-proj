@@ -174,3 +174,20 @@ input {
   justify-content: center;
   z-index: 999;
 }
+
+/* Card & Grid Spacing */
+.hero, .main-container, .hero-section {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.featured-stations, .stations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
