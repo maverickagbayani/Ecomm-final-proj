@@ -5,7 +5,7 @@ let products = [], method = 'Card';
 let sel = null;
 async function load() {
   sel = JSON.parse(localStorage.getItem('wattspot_cart') || 'null');
-  if (!sel) { window.location.href = '/shop/stations.html'; return; }
+  if (!sel) { window.location.href = '/app/directory.html'; return; }
   try {
     const r = await fetch('/api/products/' + encodeURIComponent(sel.product_id));
     if (!r.ok) throw new Error('missing');

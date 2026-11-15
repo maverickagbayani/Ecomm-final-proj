@@ -17,6 +17,6 @@ function billFor(p, kwh) {
 
 function nav(on) {
   $('nav').innerHTML = '<strong>WattSpot</strong> | ' +
-    [['stations', 'Stations', '/shop/stations.html'], ['cart', 'Cart', '/shop/cart.html'], ['owner', 'Owner', '/checkout/owner.html']]
+    [['stations', 'Stations', '/app/directory.html'], ['cart', 'Cart', '/shop/cart.html'], ['owner', 'Owner', '/checkout/owner.html']]
       .map(([k, l, h]) => `<a href="${h}"${k === on ? ' aria-current="page"' : ''}>${l}</a>`).join(' | ');
 }
