@@ -3,17 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Reservation confirmed · WattSpot</title>
+<title>Your booking · WattSpot</title>
+<link rel="stylesheet" href="/app/styles.css">
 </head>
 <body>
-<nav id="nav"></nav>
-
-<div>
-  <div id="details" aria-live="polite">
-    <div>Loading your reservation…</div>
-  </div>
-</div>
-
+<header id="nav" class="topbar"></header>
+<main class="page narrow">
+  <section id="details" class="glass-card panel" aria-live="polite">
+    <p class="state state-loading">Loading your reservation…</p>
+  </section>
+</main>
 <script src="app.js"></script>
 <script src="confirmation.js"></script>
 </body>
