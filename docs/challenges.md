@@ -1,42 +1,68 @@
-# Challenges
+Challenge 5:
 
-## Challenge 1: Break your own API
+Althea Antonet Armendarez
 
-Collection: [postman/challenge1.postman_collection.json](postman/challenge1.postman_collection.json)
+Function: (chargingWindow*kwh, powerKw, slotStart) in server/pricing.js
 
-| # | Request | It should answer | We got | Proof |
-|---|---|---|---|---|
-| 0 | Valid booking on plug `CWH-DC1` (takes the slot for #3) | 201 | 201 Created, ref `WS-78TGGM` | [screenshot](Challenge1screenshots/1794836399105_image.png) |
-| 1 | Booking with battery now `start_pct: -5` | 400 | 400 Bad Request, `start_pct` error | [screenshot](Challenge1screenshots/1794836418946_image.png) |
-| 2 | Booking that sends `"total": 1` | Saved with the server's total, or 400 | 201 Created, saved with the server's total | [screenshot](Challenge1screenshots/1794836442693_image.png) |
-| 3 | Same booking as #0 (slot taken) | 409 | 409 Conflict | [screenshot](Challenge1screenshots/1794836458547_image.png) |
-| 4 | `GET /api/stations/does-not-exist` | 404 | 404 Not Found | [screenshot](Challenge1screenshots/1794836477290_image.png) |
-| 5 | Booking without `customer_email` | 400 | 400 Bad Request, `customer_email` error | [screenshot](Challenge1screenshots/1794836494150_image.png) |
-| 6 | `GET /api/stations?q=zzzz` | 200 with an empty list | 200 OK, `[]` | [screenshot](Challenge1screenshots/1794836507180_image.png) |
+**description**
 
-## Challenge 2: Trace one real request
+Behavior:converts required charging energy (kWh) into charging duration (minutes), rounds up to the nearest whole 30 minute booking slot, and calculates the session end time.
 
-![Diagram of the trip](Challenge2screenshots/challenge2-diagram.png)
+Logic:
+Energy Needed: Battery Capacity * (Target percentage - Start percentage)
+Effective Speed: min(Charger Max kW, Vehicle Max kW)
+Raw Minutes: (Energy Needed / Effective Speed) * 60
+Booked Slots: (Raw Minutes / 30)
 
-- Request payload: [c2-payload.png](Challenge2screenshots/c2-payload.png)
-- Request headers: [c2-headers.png](Challenge2screenshots/c2-headers.png)
-- Response: [c2-response.png](Challenge2screenshots/c2-response.png)
-- Read-back: [c2-readback.png](Challenge2screenshots/c2-readback.png)
-- Read-back headers: [c2-readback-headers.png](Challenge2screenshots/c2-readback-headers.png)
+Test Environment:
 
-## Challenge 3: Overrule the AI
+Endpoint: POST /api/bookings/quote (via POSTMAN)
+Charger Plug: CWH-DC1 — Commonwealth Hub (120 kW max, open 24/7)
 
-**1. Using the Node terminal instead of an allowed tool (Challenge 5)**  
-The AI suggested a recording script where I'd run chargingWindow directly in the Node terminal (require('./server/pricing')) with two test predictions. When I double-checked Section 8 of the GC2 spec, I caught two issues: the terminal isn't on the list of allowed tools (it requires the Console, Network tab, Postman, or a database viewer), and the rubric asks for three predictions plus changing one input or line of code. Instead of recording the terminal script, I ran the function through POST /api/bookings/quote in Postman and wrote out three predictions—along with changing the target from 70% to 71%—in docs/challenges.md before hitting record.
+Start Time (slotStart): 10:00 AM (Manila)
 
-**2. Git checkout blocked by local lockfile changes**  
-To test Mav's MongoDB branch locally, the AI told me to run git switch g4/m1-mongodb-switch. Git blocked it immediately because running npm install on main had modified package-lock.json and node_modules/.package-lock.json, and untracked .env.example and docs/ files were also in the way. I discarded the lockfile diffs with git restore package-lock.json node_modules/.package-lock.json, moved the untracked files out of the folder temporarily, and then switched branches. (Good reminder to always check git status first.)
+Pre-Run Predictions:
+Case 1 — 50 kWh battery, 100 kW max (20% → 80%)
+Energy & Speed: 30 kWh @ 100 kW
+Predicted Duration: 18 min → 1 slot (30 min)
+Predicted End (Manila): 10:30 AM
 
-**3. Outdated Postman routes from the old MySQL backend**  
-The AI generated a Postman collection targeting /api/orders and /api/products, which were leftover endpoints from our old MySQL setup. Since migrating to MongoDB, those routes changed to /api/bookings and /api/stations, so running the old collection would have just thrown 404s. I rebuilt the collection for the MongoDB endpoints and checked each Challenge 1 request directly against the route files in server/routes/ before running anything.
+Note: I had run this input once while setting up Postman before recording.
 
-## Challenge 4: The owner changes a rule
+Case 2 — 40 kWh battery, 11 kW max (50% → 60%)
+Energy & Speed: 4 kWh @ 11 kW
+Predicted Duration: 21.82 min → 1 slot (30 min)
+Predicted End (Manila): 10:30 AM
 
-For this challenge we picked the 50 pesos reservation fee, since it is our version of the free-shipping line. Imagine if the owner told us to change it, and we looked everywhere this fee would appear. 
+Case 3 — 50 kWh battery, 50 kW max (20% → 70%)
+Energy & Speed: 25 kWh @ 50 kW
+Predicted Duration: 30 min → 1 slot (30 min)
+Predicted End (Manila): 10:30 AM
 
-We found one main area. The sever/config.js line 19, RESERVATION_FEE_CENTS: 5000. This is the real rule, the server uses it to work out all the prices, and the cart checkout and confirmation pages show the finished product of what the server sends back. If we had only changed config.js file, customers would pay the new fee while the home page and the Eastwood Mall page still said 50 pesos.
+Change (Boundary Test) — Same as #3, target increased to 71%
+Energy & Speed: 25.5 kWh @ 50 kW
+Predicted Duration: 30.6 min → 2 slots (60 min)
+Predicted End (Manila): 11:00 AM
+
+Boundary Note: Increasing the target by 1% pushes the raw duration from exactly 30.0 min to 30.6 min, crossing the 30-minute threshold and triggering a second booking slot.
+
+
+post-run results:
+
+Case 1: 18 min, 1 slot, ends 10:30 AM. Match: Yes. Why: 50 × (80 − 20) ÷ 100 = 30 kWh. The speed is the lower of the plug (120 kW) 
+and the car (100 kW), so 100 kW. 30 ÷ 100 × 60 = 18 minutes exactly, 
+which fits inside one 30-minute slot, so it ends at 10:30 AM.
+
+Case 2: 22 min, 1 slot, ends 10:30 AM. Match: Minutes no (predicted 21.82), slots and end yes. Why: 40 × (60 − 50) ÷ 100 = 4 kWh at 11 kW (the car's limit)
+ gives 21.82 minutes. I kept the decimal, but chargingWindow uses Math.ceil on 
+ the minutes first, so 21.82 is rounded up to 22 whole minutes. 22 minutes still fits in one slot, so the slot count and end time matched.
+
+Case 3: 30 min, 1 slot, ends 10:30 AM. Match: Yes. Why: 50 × (70 − 20) ÷ 100 = 25 kWh
+ at 50 kW (the car's limit) is exactly 30 minutes. 
+ Math.ceil leaves a whole number unchanged, and 30 ÷ 30 = 1, 
+ so it stays at exactly one slot with no extra slot added.
+
+Change (71%): 31 min, 2 slots, ends 11:00 AM. Match: Yes. Why: Raising the target by 1% adds 0.5 kWh (25.5 kWh total), which takes 30.6 minutes. Math.ceil rounds that up to 31 minutes, and 31 ÷ 30 = 1.03, which rounds up to 2 slots. 
+So one extra percent pushes the booking past the 30-minute line, adds a second slot, and moves the end time to 11:00 AM.
+
+recording: https://drive.google.com/file/d/11UCx8Vv9kpNP6nSkqqbfLUjRaE6edl1Q/view?usp=sharing 
