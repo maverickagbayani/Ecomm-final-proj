@@ -2,30 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WattSpot — Map</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="common.js" defer></script>
     <script src="map.js" defer></script>
   </head>
   <body>
     <header class="topbar">
-      <div class="logo">WattSpot</div>
+      <div class="logo"><a href="index.html">WattSpot</a></div>
       <nav class="topbar-links">
-        <a href="map.html">Map</a>
+        <a href="map.html" aria-current="page">Map</a>
         <a href="directory.html">Stations</a>
+        <a href="/shop/cart.html">Cart</a>
       </nav>
     </header>
 
     <main class="map-container">
-      <!-- Search Bar -->
       <div class="search-overlay">
-        <!-- Removed glass-card, added search-input -->
-        <input id="search-box" class="search-input" type="search" placeholder="Search EDSA, Katipunan..." />
+        <label for="search-box" class="sr-only">Search stations</label>
+        <input id="search-box" class="search-input" type="search" placeholder="Search EDSA, Katipunan…" />
+        <p><a href="/frontend-map/index.html" class="primary-btn" style="display: inline-block; width: auto; text-decoration: none;">Open the live map</a></p>
       </div>
 
-      <!-- Hidden Sidebar -->
-      <aside id="nearby-sidebar" class="sidebar hidden">
+      <aside id="nearby-sidebar" class="sidebar">
         <h3 style="color: white; margin-top: 0;">Nearby hubs</h3>
-        <ul id="search-results" style="list-style: none; padding: 0; margin: 0;"></ul>
+        <ul id="search-results" class="card-list"></ul>
       </aside>
     </main>
   </body>

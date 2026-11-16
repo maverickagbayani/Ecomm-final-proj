@@ -1,11 +1,10 @@
-// Turns database rows into the JSON the pages expect (field names kept from the original server.js).
-// this stores things 
+// Turns database documents into the JSON the pages expect (field names kept from the original API).
 
 const { CONNECTORS, IDLE_GRACE_MINUTES } = require('./config');
-const { toIso, fromDb, addMinutes, manila } = require('./time');
+const { toIso, addMinutes, manila } = require('./time');
 const { is24h } = require('./availability');
 
-//conversion
+// centavos → pesos
 const pesos = (cents) => Math.round(Number(cents)) / 100;
 
 function clock12(hour) {
@@ -24,20 +23,20 @@ function isOpenNow(st, now) {
   return m >= st.open_hour * 60 && m < st.close_hour * 60;
 }
 
-// One bookable product. `stock` = sockets free right now (computed from saved bookings).
+// One bookable plug (from repositories/products.js). `stock` = 1 if the plug is free right now, else 0.
 function formatProduct(p, activeCount, now) {
-  const label = CONNECTORS[p.connector] || p.connector;
   return {
     id: p.id,
     station_id: p.station_id,
-    name: `${p.station_name} · ${label}`,
+    name: `${p.station_name} · ${p.label}`,
     station_name: p.station_name,
     address: p.address,
-    lat: Number(p.lat),
-    lng: Number(p.lng),
-    connector: label,
+    area: p.area,
+    lat: p.lat,
+    lng: p.lng,
+    connector: CONNECTORS[p.connector] || p.connector,
     connector_code: p.connector,
-    power_kw: Number(p.power_kw),
+    power_kw: p.power_kw,
     hours: hoursLabel(p),
     open_now: isOpenNow(p, now),
     description: p.description,
@@ -66,49 +65,59 @@ function formatStationForMap(products) {
   };
 }
 
+// One booking document (from repositories/orders.js)
 function formatOrder(o) {
-  const label = CONNECTORS[o.connector] || o.connector;
   return {
-    id: o.id,
-    product_id: o.product_id,
-    station_id: o.station_id,
-    customer_name: o.customer_name,
-    customer_email: o.customer_email,
-    payment_method: o.payment_method,
-    socket: `${o.station_name} · ${label}`,
-    kwh: Number(o.kwh),
-    slot_start: toIso(o.slot_start),
-    slot_end: toIso(o.slot_end),
-    socket_frees_at: addMinutes(fromDb(o.slot_end), IDLE_GRACE_MINUTES).toISOString(),
-    charging_minutes: o.charging_minutes,
+    id: String(o._id),
+    ref: o.ref,
+    connector_id: o.connectorId,
+    product_id: o.connectorId,
+    station_id: o.stationId,
+    customer_name: o.customer.name,
+    customer_email: o.customer.email,
+    payment_method: o.paymentMethod,
+    socket: `${o.stationName} · ${o.connectorLabel}`,
+    connector: CONNECTORS[o.connectorType] || o.connectorType,
+    power_kw: o.connectorKw,
+    vehicle: o.vehicle ? { model: o.vehicle.model, battery_kwh: o.vehicle.batteryKwh, max_kw: o.vehicle.maxKw } : null,
+    start_pct: o.startPct,
+    target_pct: o.targetPct,
+    kwh: o.kwh,
+    charge_kw: o.chargeKw,
+    slot_start: toIso(o.slotStart),
+    slot_end: toIso(o.slotEnd),
+    slot_count: o.slotCount,
+    socket_frees_at: addMinutes(new Date(o.slotEnd), IDLE_GRACE_MINUTES).toISOString(),
+    charging_minutes: o.chargingMinutes,
     breakdown: {
-      price_per_kwh: pesos(o.price_per_kwh_cents),
-      charging: pesos(o.charging_cents),
-      reservation_fee: pesos(o.reservation_fee_cents),
-      deposit: pesos(o.deposit_cents),
+      price_per_kwh: pesos(o.pricePerKwhCents),
+      charging: pesos(o.chargingCents),
+      reservation_fee: pesos(o.reservationFeeCents),
+      deposit: pesos(o.depositCents),
     },
-    total: pesos(o.total_cents),
-    revenue: pesos(o.revenue_cents),
-    points_earned: o.points_earned,
-    points_redeemed: o.points_redeemed,
-    points_balance: o.points_balance,
+    total: pesos(o.totalCents),
+    revenue: pesos(o.revenueCents),
+    points_earned: o.pointsEarned,
+    points_redeemed: o.pointsRedeemed,
+    points_balance: o.pointsBalance,
+    off_peak: o.offPeak,
     status: o.status,
-    createdAt: toIso(o.created_at),
+    createdAt: toIso(o.createdAt),
   };
 }
 
 function formatReport(r) {
   return {
-    id: r.id,
-    station_id: r.station_id,
-    station: r.station_name,
-    issue_type: r.issue_type,
+    id: String(r._id),
+    station_id: r.stationId,
+    station: r.stationName,
+    issue_type: r.issueType,
     description: r.description,
-    reporter_name: r.reporter_name,
-    reporter_email: r.reporter_email,
+    reporter_name: r.reporterName,
+    reporter_email: r.reporterEmail,
     status: r.status,
-    createdAt: toIso(r.created_at),
-    resolvedAt: toIso(r.resolved_at),
+    createdAt: toIso(r.createdAt),
+    resolvedAt: toIso(r.resolvedAt),
   };
 }
 

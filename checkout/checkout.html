@@ -4,49 +4,56 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Checkout · WattSpot</title>
+<link rel="stylesheet" href="/app/styles.css">
 </head>
 <body>
-<nav id="nav"></nav>
+<header id="nav" class="topbar"></header>
 
-<div>
-  <form id="f" novalidate>
-    <div><h2>Checkout</h2><span>Slot held</span></div>
-    <div>
-      <div id="sel">Loading your selection…</div>
-      <a href="/shop/cart.html">Change selection</a>
-      <select id="socket" hidden></select><input id="kwh" type="hidden">
+<main class="page">
+  <h1>Checkout</h1>
+  <p class="page-sub" id="sel" aria-live="polite">Loading your selection…</p>
+
+  <div class="detail-grid">
+    <form id="f" class="glass-card panel" novalidate>
+      <h2>Your details</h2>
       <label for="name">Full name</label>
-      <input id="name" type="text" autocomplete="name" required>
-      <label for="email">Email</label>
-      <input id="email" type="email" autocomplete="email" required>
-    </div>
-    <div id="message" role="alert" hidden></div>
-  </form>
+      <input id="name" type="text" autocomplete="name" maxlength="80" aria-describedby="err-name">
+      <p id="err-name" class="field-error" hidden></p>
+      <label for="email">Email (for your receipt and Watt Credits)</label>
+      <input id="email" type="email" autocomplete="email" maxlength="120" aria-describedby="err-email">
+      <p id="err-email" class="field-error" hidden></p>
+      <div id="message" class="error-msg" role="alert" hidden></div>
+      <a href="/shop/cart.html" class="primary-btn link-btn">Back to cart</a>
+    </form>
 
-  <div>
-    <h3>Itemized bill</h3>
-    <div id="sum-name"></div>
-    <div><span id="l-charge">Charging fee</span><b id="a-charge">₱0.00</b></div>
-    <div><span>Slot reservation fee</span><b id="a-res">₱50.00</b></div>
-    <div><span>Refundable overstay deposit</span><b id="a-dep">₱100.00</b></div>
-    <hr>
-    <div><span>Total due today</span><span id="total">₱0.00</span></div>
-    <button type="button" id="go">Continue to payment</button>
+    <section class="glass-card panel" aria-live="polite">
+      <h2>Itemized bill</h2>
+      <p class="muted" id="sum-name"></p>
+      <div class="info-row"><span id="l-charge">Charging fee</span><b id="a-charge">…</b></div>
+      <div class="info-row"><span>Slot reservation fee</span><b id="a-res">…</b></div>
+      <div class="info-row"><span>Refundable overstay deposit</span><b id="a-dep">…</b></div>
+      <div class="total-row"><span>Total due today</span><span id="total">…</span></div>
+      <button type="button" id="go" class="primary-btn" disabled>Continue to payment</button>
+      <p class="note">Payment is simulated. No real money is charged.</p>
+    </section>
   </div>
-</div>
+</main>
 
-<div id="modal" role="dialog" aria-labelledby="pay-title" hidden>
-  <h3 id="pay-title">Choose payment</h3>
-  <button type="button" data-m="GCash" aria-pressed="false">GCash</button>
-  <button type="button" data-m="Maya Wallet" aria-pressed="false">Maya Wallet</button>
-  <button type="button" data-m="Card" aria-pressed="true">Credit / Debit card</button>
-  <button type="button" data-m="Watt Credits" aria-pressed="false">Watt Credits</button>
-  <hr>
-  <div><span>Amount due today</span><span id="total2">₱0.00</span></div>
-  <div id="chosen">Selected: Card</div>
-  <div id="pay-error" role="alert" hidden></div>
-  <button type="button" id="pay">Pay securely</button>
-  <button type="button" id="cancel">Back to bill</button>
+<div id="modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="pay-title" hidden>
+  <div class="glass-card">
+    <h2 id="pay-title">Choose payment</h2>
+    <div class="pay-options">
+      <button type="button" data-m="GCash" aria-pressed="false">GCash</button>
+      <button type="button" data-m="Maya Wallet" aria-pressed="false">Maya</button>
+      <button type="button" data-m="Card" aria-pressed="true">Credit / debit card</button>
+      <button type="button" data-m="Watt Credits" aria-pressed="false">Watt Credits</button>
+    </div>
+    <div class="total-row"><span>Amount due</span><span id="total2">…</span></div>
+    <p class="muted" id="chosen">Selected: Card</p>
+    <div id="pay-error" class="error-msg" role="alert" hidden></div>
+    <button type="button" id="pay" class="primary-btn">Pay securely</button>
+    <button type="button" id="cancel" class="primary-btn link-btn">Back to bill</button>
+  </div>
 </div>
 
 <script src="app.js"></script>

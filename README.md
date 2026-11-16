@@ -1,83 +1,85 @@
-WattSpot
+# WattSpot
 
-WattSpot lets EV drivers in Quezon City see which public chargers are free across every network, book a 30-minute charging slot, and know when their charge will finish before they leave home. Drivers browse stations, pick a plug and a time, enter their car and battery %, and get a confirmed booking with an itemised bill. Every booking earns Watt Credits, double at night.
+EV charging-slot booking for Quezon City (ITMGT 45.03, GC2). Drivers browse stations, pick a plug and a time slot, book it, and earn Watt Credits.
 
-Live site: https://wattspot-test.onrender.com
+## Stack
 
-ITMGT 45.03 · Group 5 · GC2
+- **Node.js 24 and Express 5**: one web service that serves both the API (`/api/...`) and the pages.
+- **MongoDB Atlas, through Mongoose 9**: stores stations, bookings, slot holds, customers and reports.
+- **Plain HTML, CSS and JavaScript with `fetch`**: the front end. It will move to React for the Final Project.
 
-Team
+## Run it locally
 
-M1 · Maverick Agbayani (@maverickagbayani), Database and deployment, Captain. Owns the MongoDB models and seed data, the switch from MySQL to MongoDB, and the Render deploy.
-M3 · Alysa Maxine Marquez (@alysamaxine), Front end. Owns the home, car setup, station list, station detail and map pages (front end - max/).
-M4 · Althea Armendarez (@altheaarmendarez), Back end. Owns the API routes, validation, pricing and availability (server/, server.js), plus the shop, checkout and owner pages.
-M5 · Zaira Venice Farrales (@zaifarrales), UI/UX and map. Owns the interactive map (frontend-map/) and the page design.
-
-Tech stack
-
-Node.js 24.x. One JavaScript runtime for the server, the same language as the front end.
-Express 5.3. A small web framework: one service serves both the pages and the /api routes.
-MongoDB Atlas (cloud, free tier). A hosted database the whole team can reach, with a geospatial index for "stations near me".
-Mongoose 9.12. Schemas, validation and transactions on top of MongoDB.
-dotenv 18.0. Loads MONGODB_URI and other settings from .env, so no secrets live in the code.
-Plain HTML, CSS and JavaScript (fetch). Simple pages with no build step. The Final Project moves to React.
-Mapbox GL JS 3.4. The interactive map of the stations.
-Render (free web service). Hosts the app from GitHub and redeploys when main changes.
-Postman (desktop app). Tests every API route, including the Challenge 1 break tests (docs/postman_collection.json).
-
-Run it locally
 1. Install Node.js 24.
 2. Install the dependencies:
-    
-        npm install
-3. Copy .env.example to .env and fill in the values. Ask a teammate privately for the database link.
-        cp .env.example .env
-4. Add the stations to the database (10 Quezon City stations, 28 plugs):
-
-    npm run seed
-
-Do not run npm run seed -- --reset on the shared database: it deletes every booking, customer and report. 
+   ```bash
+   npm install
+   ```
+3. Copy `.env.example` to `.env` and set `MONGODB_URI` (plus `MAPBOX_TOKEN` for the map).
+4. Seed the stations. This adds 10 Quezon City stations with 28 plugs:
+   ```bash
+   npm run seed
+   ```
+   `npm run seed -- --reset` also deletes every booking, slot hold, customer and report.
 5. Start the server:
-    npm start
+   ```bash
+   npm start
+   ```
+   Then open http://localhost:3000. Use `npm run dev` to restart automatically when files change.
 
-6. Open http://localhost:3000. npm run dev restarts automatically when files change.
+## Environment variables
 
-Environment variables
+| Name | What it is |
+|---|---|
+| `MONGODB_URI` | MongoDB Atlas connection string (required) |
+| `MAPBOX_TOKEN` | Mapbox public token for the map page |
+| `PORT` | Port to listen on (Render sets this itself) |
 
-Names only. Real values go in your own .env (never committed) and in Render's Environment settings.
+## Deploy on Render
 
-    MONGODB_URI: MongoDB Atlas connection string (required)
-    MAPBOX_TOKEN: Mapbox public token for the map view
-    PORT: port to listen on. Render sets this itself; locally it defaults to 3000
+One **Web Service** serves both the API and the pages.
 
-Changes since GC1
+1. In MongoDB Atlas, go to **Network Access** and add `0.0.0.0/0`. Render's free tier has no fixed IP address.
+2. In Render, choose **New → Web Service** and connect the GitHub repo, branch `main`.
+3. Use these settings:
 
-    Removed other drivers' live battery %. The GC1 station page showed it, but Phase 1 has no way to collect other cars' battery data (GC1 feedback). Pages now show which plugs are booked or free, worked out from saved bookings.
-    
-    Added the ₱50 reservation fee to our revenue model. GC1 only listed a premium pass and ads, even though our checkout mockup charged this fee (GC1 feedback). The ₱100 overstay deposit is refundable, so it is not counted as revenue.
-    
-    Made booking the core flow. Booking was a Phase 2 feature in GC1. GC2 needs a full flow that saves to a database, so it is now browse → select → confirm → save.
-    
-    Defined when a socket frees up. GC1 feedback asked when a check-in ends. Each booking now holds whole 30-minute slots, and the plug frees 10 minutes after the booked window ends.
-    
-    Turned loyalty points into Watt Credits. Instead of points for accurate reports, drivers earn 1 credit per ₱50 of charging, double from 10 PM to 6 AM, and can pay with them. It is a simple rule tied to bookings that we can test.
-    
-    Added an owner view. GC1 had no admin screen for incident reports (GC1 feedback). The owner page now lists bookings, five metrics, and incident reports with a "Mark resolved" button.
-    
-    Kept plain HTML, CSS and JavaScript for now. GC1 planned a MERN stack with React. We kept the front end simple for GC2 and plan React for the Final Project.
-    
-    Tried MySQL, then switched to MongoDB. We built a MySQL backend first, then moved to MongoDB Atlas with Mongoose. It matched our GC1 plan (geospatial index) and gave the team one shared database.
-    
-    Left out premium subscriptions and accounts. They are outside the GC2 flow, so we kept them for later.
+   | Setting | Value |
+   |---|---|
+   | Language | Node |
+   | Build Command | `npm install` |
+   | Start Command | `npm start` |
+   | Health Check Path | `/api/health` |
+   | Instance type | Free |
 
-Documentation
+4. Under **Environment**, add:
+   - `MONGODB_URI`: your Atlas connection string, pasted without quotes
+   - `NODE_ENV`: `production`
+   - `MAPBOX_TOKEN`: optional, for the map view
 
-docs/route-table.md: route table
-docs/schema.md: database schema
-docs/system-diagram.md: system diagram and how an order flows
-docs/challenges.md: GC2 challenges 1 to 5
-docs/baseline.md: performance baseline for the Final Project
-docs/business.md: business model and revenue numbers
-docs/postman_collection.json: exported Postman tests
-AI-USAGE.md: how we used AI
-CONTRIBUTING.md: our Git workflow
+   Don't set `PORT`; Render sets it, and `server.js` reads `process.env.PORT`.
+5. Deploy. Render redeploys automatically whenever something is merged into `main`.
+
+The live site uses the same Atlas database as your local `.env`, so the stations seeded with `npm run seed` are already there. The free tier sleeps when idle, so the first visit after a while can take up to a minute.
+
+## Database (MongoDB collections)
+
+| Collection | Key fields |
+|---|---|
+| `stations` | `_id` (slug), name, address, area, location (GeoJSON point, 2dsphere index), openHour, closeHour, pricePerKwhCents, connectors[] `{connectorId, label, type, kw}` |
+| `bookings` | ref, stationId, connectorId, customer `{name, email}`, vehicle `{model, batteryKwh, maxKw}`, startPct, targetPct, kwh (estimated), chargeKw, paymentMethod, slotStart, slotEnd, slotCount, chargingMinutes, amounts in centavos, pointsEarned, pointsRedeemed, status, createdAt |
+| `slotholds` | stationId, connectorId, start, date, bookingId. **Unique index on (connectorId, start)** |
+| `customers` | email (unique), name, points |
+| `reports` | stationId, stationName, issueType, description, reporter, status, createdAt, resolvedAt |
+
+Each connector is one physical plug. A booking holds one `slotholds` document for every 30-minute slot it covers. The booking and its holds are saved in one transaction. If another booking already holds any of those slots, the unique index rejects the insert and the API answers **409**.
+
+**How a charge is planned** (in `planCharge`, `server/pricing.js`):
+
+- Energy (kWh) = battery capacity × (target % − battery now %)
+- Charging speed = the lower of the plug's kW and the car's max kW
+- Charge time = energy ÷ speed, rounded up to whole 30-minute slots
+- Total = ₱50 reservation fee + energy × station ₱/kWh + ₱100 refundable deposit
+
+For example, a BYD Atto 3 (60.5 kWh, 88 kW max) going from 15% to 85% at SM North EDSA (120 kW, ₱24/kWh) needs 42.35 kWh. At 88 kW that takes 29 minutes, so it holds one slot. The bill is ₱1,016.40 + ₱50 + ₱100 = ₱1,166.40.
+
+All money and charging-time math is in `server/pricing.js`. Every business rule (fees, slot length, points rate) is in `server/config.js`.
