@@ -8,7 +8,12 @@ module.exports = {
   BOOKING_DAYS_AHEAD: 7,
   PAST_GRACE_MINUTES: 5, // a slot that started under 5 minutes ago can still be booked
   IDLE_GRACE_MINUTES: 10, // the socket frees for the next driver this long after the window ends
-  MAX_KWH: 200,
+
+  // The driver's car and charge (GC1: battery % now → target %)
+  MIN_BATTERY_KWH: 10,
+  MAX_BATTERY_KWH: 200,
+  MIN_CAR_KW: 3,
+  MAX_CAR_KW: 400,
 
   // Money, in centavos
   RESERVATION_FEE_CENTS: 5000, // ₱50: WattSpot's own revenue per booking
@@ -23,6 +28,7 @@ module.exports = {
 
   // Owner screen: a product-day with 80%+ of its socket-slots booked is "almost full"
   ALMOST_FULL_RATIO: 0.8,
+  ALMOST_FULL_DAYS: 1, // 1 = today only (docs/plan.md: "connectors almost full today")
 
   PAYMENT_METHODS: ['GCash', 'Maya Wallet', 'Card', 'Watt Credits'],
   CREDITS_PAYMENT: 'Watt Credits',
