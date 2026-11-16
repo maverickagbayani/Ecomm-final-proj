@@ -1,10 +1,9 @@
 // Incident reports: POST /api/reports, GET /api/reports, PATCH /api/reports/:id/resolve
 const express = require('express');
 const reportsRepo = require('../repositories/reports');      // save, list and resolve reports
-const productsRepo = require('../repositories/products');    // look up which station a charger belongs to
-const { validateReport, hasErrors, errorBody, toPositiveInt } = require('../validate'); // checks the form fields
-const { formatReport } = require('../format');                // DB row → JSON for the pages
-const { toDb } = require('../time');                          // JS date → MySQL date format
+const productsRepo = require('../repositories/products');    // look up which station a plug belongs to
+const { validateReport, hasErrors, errorBody } = require('../validate'); // checks the form fields
+const { formatReport } = require('../format');                // DB document → JSON for the pages
 
 // A small group of routes that server/routes/index.js plugs in under /api
 const router = express.Router();
@@ -16,17 +15,19 @@ router.post('/reports', async (req, res) => {
   if (hasErrors(errors)) return res.status(400).json(errorBody(errors));
 
   // 2. Work out which station the report is about.
-  // The report form's dropdown lists chargers (from /api/products), so it sends a charger (product) id.
-  // We look up that charger's station. If it isn't a charger id, we accept it as a station id instead.
-  // (Product ids are checked first: if a number is both, it's treated as a product id.)
-  let stationId = null;
+  // The report form's dropdown lists plugs (from /api/products), so it sends a plug id like 'UPTC-DC1'.
+  // We look up that plug's station. If it isn't a plug id, we accept it as a station id instead.
+  let station = null;
   const product = await productsRepo.getProduct(values.stationId);
-  if (product) stationId = product.station_id;
-  else if (await productsRepo.getStation(values.stationId)) stationId = values.stationId;
-  if (!stationId) return res.status(404).json({ error: 'Station not found' });
+  if (product) station = { id: product.station_id, name: product.station_name };
+  else {
+    const s = await productsRepo.getStation(values.stationId);
+    if (s) station = { id: s._id, name: s.name };
+  }
+  if (!station) return res.status(404).json({ error: 'Station not found' });
 
   // 3. Save it (status starts as 'open') and send it back: 201 Created
-  const report = await reportsRepo.insertReport({ ...values, stationId, createdAt: toDb(new Date()) });
+  const report = await reportsRepo.insertReport({ ...values, stationId: station.id, stationName: station.name });
   res.status(201).json(formatReport(report));
 });
 
@@ -36,16 +37,10 @@ router.get('/reports', async (req, res) => {
 });
 
 // PATCH /api/reports/:id/resolve: the owner's "Mark resolved" button.
-// PATCH (not POST) because it changes part of an existing report rather than creating a new one.
 router.patch('/reports/:id/resolve', async (req, res) => {
-  const id = toPositiveInt(req.params.id);
-  // 404 if the id isn't a valid number, or no report has that id (resolveReport returns false)
-  if (!id || !(await reportsRepo.resolveReport(id, toDb(new Date())))) {
-    return res.status(404).json({ error: 'Report not found' });
-  }
-  // Send back the updated report, now with status 'resolved'
-  res.status(200).json(formatReport(await reportsRepo.getReport(id)));
+  const report = await reportsRepo.resolveReport(req.params.id);
+  if (!report) return res.status(404).json({ error: 'Report not found' });
+  res.status(200).json(formatReport(report));
 });
 
-// Makes these routes available to server/routes/index.js
 module.exports = router;
