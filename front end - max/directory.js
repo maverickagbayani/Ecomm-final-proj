@@ -1,93 +1,59 @@
-var stationList = document.getElementById("station-list");
+﻿// Stations (Browse): Fetch → Transform → Render.
+// Search and filters are sent to the API (/api/stations?q=&connector=&access=); sorting happens here.
+var stationList = $("station-list");
+var stations = [];       // last list from the API
+var sortKey = "nearest"; // 'nearest' | 'availability' | 'price'
 
-// placeholders
-var STATIONS = [
-  { 
-    name: "UP Town Center", 
-    address: "Katipunan Ave, Quezon City",
-    stock: 4, 
-    price_per_kwh: 26, 
-    power_kw: 50, 
-    connector: "Type 2" 
-  },
-  { 
-    name: "Eastwood Mall", 
-    address: "Bagumbayan, Quezon City", 
-    stock: 2, 
-    price_per_kwh: 0, 
-    power_kw: 22, 
-    connector: "Type 2" 
-  },
-  { 
-    name: "SM North EDSA", 
-    address: "Bago Bantay, Quezon City", 
-    stock: 12, 
-    price_per_kwh: 28, 
-    power_kw: 120, 
-    connector: "CCS2" 
-  }
-];
-
-function sortStations(list, sortKey) {
+// Transform: order the list for the chosen sort
+function sortStations(list) {
   var copy = list.slice();
-
   copy.sort(function (a, b) {
-    if (sortKey === "price") {
-      // Lowest price first
-      return a.price_per_kwh < b.price_per_kwh ? -1 : a.price_per_kwh > b.price_per_kwh ? 1 : 0;
-    } else if (sortKey === "distance") {
-      // Alphabetical by address (since distance is removed)
-      return a.address < b.address ? -1 : a.address > b.address ? 1 : 0;
-    } else if (sortKey === "availability") {
-      // Highest availability first
-      return b.stock < a.stock ? -1 : b.stock > a.stock ? 1 : 0;
-    }
-    return 0;
+    if (sortKey === "price") return a.pricePerKwh - b.pricePerKwh;
+    if (sortKey === "availability") return b.freeSockets - a.freeSockets;
+    return distanceKm(QC_CENTER, a.location.coordinates) - distanceKm(QC_CENTER, b.location.coordinates);
   });
-
   return copy;
 }
 
-function renderDirectory(items) {
-  stationList.innerHTML = "";
-
-  items.forEach(function (station) {
-    var li = document.createElement("li");
-    li.className = "glass-card";
-    li.style.marginBottom = "15px";
-    li.style.width = "100%";
-    li.style.maxWidth = "100%";
-
-    var priceText = station.price_per_kwh === 0 ? "Free" : "₱" + station.price_per_kwh + "/kWh";
-
-    li.innerHTML = `
-      <div style="display: flex; justify-content: space-between;">
-        <div>
-          <h3 style="margin-top: 0; margin-bottom: 5px;">${station.name}</h3>
-          <span class="muted">${station.address} - ${priceText}</span>
-        </div>
-        <div>
-          <strong>${station.stock} free sockets</strong>
-        </div>
-      </div>
-    `;
-
-    stationList.append(li);
-  });
+// Render
+function renderDirectory() {
+  if (!stations.length) return showState(stationList, "empty", "No stations match your search. Try another area or clear the filters.");
+  stationList.innerHTML = sortStations(stations).map(function (s) {
+    return stationCard(s, distanceKm(QC_CENTER, s.location.coordinates).toFixed(1) + " km from QC Circle");
+  }).join("");
 }
 
-// Event Listeners for the sorting buttons
-document.getElementById("sort-nearest").addEventListener("click", function () {
-  renderDirectory(sortStations(STATIONS, "distance"));
+// Fetch
+var requestNo = 0;
+async function loadStations() {
+  var mine = ++requestNo; // ignore answers to older searches that arrive late
+  var params = new URLSearchParams();
+  if ($("q").value.trim()) params.set("q", $("q").value.trim());
+  if ($("connector").value) params.set("connector", $("connector").value);
+  if ($("pricing").value) params.set("access", $("pricing").value);
+  showState(stationList, "loading", "Loading stations…");
+  try {
+    var data = await getJSON("/api/stations?" + params);
+    if (mine !== requestNo) return;
+    stations = data;
+    renderDirectory();
+  } catch (e) {
+    if (mine !== requestNo) return;
+    showState(stationList, "error", "Could not load stations. Check your connection and try again.");
+  }
+}
+
+// Sort buttons
+[["sort-nearest", "nearest"], ["sort-avail", "availability"], ["sort-price", "price"]].forEach(function (pair) {
+  $(pair[0]).addEventListener("click", function () {
+    sortKey = pair[1];
+    document.querySelectorAll(".sort-row .chip").forEach(function (b) { b.setAttribute("aria-pressed", String(b.id === pair[0])); });
+    renderDirectory();
+  });
 });
 
-document.getElementById("sort-avail").addEventListener("click", function () {
-  renderDirectory(sortStations(STATIONS, "availability"));
-});
+$("q").addEventListener("input", debounce(loadStations, 300));
+$("connector").addEventListener("change", loadStations);
+$("pricing").addEventListener("change", loadStations);
 
-document.getElementById("sort-price").addEventListener("click", function () {
-  renderDirectory(sortStations(STATIONS, "price"));
-});
-
-// Initial load (defaulting to Nearest)
-renderDirectory(sortStations(STATIONS, "distance"));
+loadStations();

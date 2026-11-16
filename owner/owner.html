@@ -4,44 +4,49 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Owner Dashboard · WattSpot</title>
+<link rel="stylesheet" href="/app/styles.css">
 </head>
 <body>
-<nav id="nav"></nav>
+<header id="nav" class="topbar"></header>
 
-<div>
-  <div>
-    <h2>Owner dashboard</h2>
-    <div><span id="updated"></span><button id="refresh" type="button">Refresh</button></div>
-  </div>
-
-  <div aria-live="polite">
-    <div><span>Total orders</span><span id="m-orders">–</span></div>
-    <div><span>Total revenue</span><span id="m-revenue">–</span></div>
-    <div><span>Average order value</span><span id="m-aov">–</span></div>
-    <div><span>Top-selling station</span><span id="m-top">–</span><span id="m-top-sub"></span></div>
-    <div><span>Low stock (under 5 open slots)</span><ul id="m-low"><li>–</li></ul></div>
-  </div>
-
-  <div>
-    <h3>All bookings</h3>
+<main class="page" style="max-width: 1100px;">
+  <div class="page-head">
     <div>
-      <table>
-        <thead><tr><th>Order</th><th>Customer</th><th>Email</th><th>Station</th><th>kWh</th><th>Payment</th><th>Total</th><th>Date</th></tr></thead>
-        <tbody id="rows"><tr><td colspan="8">Loading…</td></tr></tbody>
+      <h1>Owner dashboard</h1>
+      <p class="page-sub" style="margin: 0;" id="updated">Loading…</p>
+    </div>
+    <button id="refresh" type="button" class="primary-btn">Refresh</button>
+  </div>
+  <div id="load-error" class="error-msg" role="alert" hidden></div>
+
+  <section class="metric-grid" aria-live="polite" aria-label="Key numbers">
+    <div class="metric"><span>Bookings</span><b id="m-orders">…</b></div>
+    <div class="metric"><span>Revenue (excl. deposits)</span><b id="m-revenue">…</b></div>
+    <div class="metric"><span>Average booking value</span><b id="m-aov">…</b></div>
+    <div class="metric"><span>Top station</span><b id="m-top">…</b><small id="m-top-sub"></small></div>
+    <div class="metric"><span>Plugs almost full today (80%+ booked)</span><ul id="m-low"><li>…</li></ul></div>
+  </section>
+
+  <section class="glass-card panel">
+    <h2>All bookings</h2>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Ref</th><th>Customer</th><th>Station · plug</th><th>Slot</th><th>Charge</th><th>Payment</th><th>Total</th><th>Booked</th></tr></thead>
+        <tbody id="rows"><tr><td class="full" colspan="8">Loading bookings…</td></tr></tbody>
       </table>
     </div>
-  </div>
+  </section>
 
-  <div>
-    <h3>Incident reports</h3>
-    <div>
-      <table>
-        <thead><tr><th>Report</th><th>Station</th><th>Issue</th><th>Details</th><th>Reporter</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
-        <tbody id="reports"><tr><td colspan="8">Loading…</td></tr></tbody>
+  <section class="glass-card panel">
+    <h2>Incident reports</h2>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Report</th><th>Station</th><th>Issue</th><th>Details</th><th>Reporter</th><th>Status</th><th>Sent</th><th></th></tr></thead>
+        <tbody id="reports"><tr><td class="full" colspan="8">Loading reports…</td></tr></tbody>
       </table>
     </div>
-  </div>
-</div>
+  </section>
+</main>
 
 <script src="app.js"></script>
 <script src="owner.js"></script>

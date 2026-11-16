@@ -1,42 +1,37 @@
-// SQL for incident reports. Only this file saves or changes the reports table.
-// TODO (Mav): see server/README.md for the tables and columns this file needs.
-const { getPool } = require('../db');
+// Incident reports. Only this file saves or changes the reports collection.
+const mongoose = require('mongoose');
+const { Report } = require('../models');
 
-// Shared start of every "read reports" query: the report plus its station's name.
-const REPORT_SELECT = 'SELECT r.*, s.name AS station_name FROM reports r JOIN stations s ON s.id = r.station_id';
-
-// Saves a new report as 'open', then reads it back (with the station name) to return it.
+// Saves a new report as 'open' and returns it.
 // Used by: POST /api/reports (the "Report an issue" form)
-async function insertReport(r, db = getPool()) {
-  const [result] = await db.query(
-    `INSERT INTO reports (station_id, issue_type, description, reporter_name, reporter_email, status, created_at)
-     VALUES (?, ?, ?, ?, ?, 'open', ?)`,
-    [r.stationId, r.issueType, r.description, r.reporterName, r.reporterEmail, r.createdAt]
-  );
-  return getReport(result.insertId, db);
+async function insertReport(r) {
+  const doc = await Report.create({
+    stationId: r.stationId,
+    stationName: r.stationName,
+    issueType: r.issueType,
+    description: r.description,
+    reporterName: r.reporterName,
+    reporterEmail: r.reporterEmail,
+  });
+  return doc.toObject();
 }
 
-// One report by its id, or null if it doesn't exist.
-async function getReport(id, db = getPool()) {
-  const [rows] = await db.query(`${REPORT_SELECT} WHERE r.id = ?`, [id]);
-  return rows[0] || null;
+// One report by its id, or null.
+async function getReport(id) {
+  if (!mongoose.isValidObjectId(id)) return null;
+  return Report.findById(id).lean();
 }
 
-// The 100 most recent reports, newest first.
-// Used by: GET /api/reports (owner dashboard)
-async function listReports(db = getPool()) {
-  const [rows] = await db.query(`${REPORT_SELECT} ORDER BY r.id DESC LIMIT 100`);
-  return rows;
+// The 100 most recent reports, newest first. Used by: GET /api/reports (owner dashboard)
+async function listReports() {
+  return Report.find().sort({ createdAt: -1 }).limit(100).lean();
 }
 
-// Marks a report as resolved and records when.
-// Returns true if a report was changed, false if no report has that id (the route then answers 404).
+// Marks a report as resolved. Returns the updated report, or null if no report has that id.
 // Used by: PATCH /api/reports/:id/resolve (the owner's "Mark resolved" button)
-async function resolveReport(id, resolvedAt, db = getPool()) {
-  const [result] = await db.query("UPDATE reports SET status = 'resolved', resolved_at = ? WHERE id = ?", [resolvedAt, id]);
-  return result.affectedRows > 0;
+async function resolveReport(id) {
+  if (!mongoose.isValidObjectId(id)) return null;
+  return Report.findByIdAndUpdate(id, { status: 'resolved', resolvedAt: new Date() }, { returnDocument: 'after' }).lean();
 }
 
-// Makes these functions available to other files.
-// Used by server/routes/reports.js.
 module.exports = { insertReport, getReport, listReports, resolveReport };

@@ -1,6 +1,6 @@
 /* ============================================================
    WattSpot interactive map
-   - Loads stations (from stations.json now, from the real API later)
+   - Loads stations from our API (/api/stations)
    - Shows colored pins on a Mapbox map
    - Filter chips + search box
    - "Nearby hubs" list
@@ -9,7 +9,7 @@
 
 /* ---------- settings (come from config.js) ---------- */
 const TOKEN = typeof MAPBOX_TOKEN !== "undefined" ? MAPBOX_TOKEN : "";
-const API = typeof API_URL !== "undefined" ? API_URL : "stations.json";
+const API = typeof API_URL !== "undefined" ? API_URL : "/api/stations";
 
 // If API_URL ends with ".json" we read a local file and filter in the browser.
 // Otherwise we call the real back end and send the filters as URL parameters.
@@ -185,8 +185,7 @@ function selectStation(s) {
       <button class="sheet-close" id="sheet-close" aria-label="Close">✕</button>
     </div>
     <div class="sheet-actions">
-      <!-- TODO (team): link this to the Station Detail / Check-in page -->
-      <button class="btn">View station</button>
+      <a class="btn" href="/app/station.html?id=${encodeURIComponent(s.id)}">View station</a>
       <a class="btn o" target="_blank" rel="noopener"
          href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}">Directions</a>
     </div>`;
@@ -240,10 +239,11 @@ function startMap() {
   if (!TOKEN || TOKEN.includes("PASTE")) {
     const notice = document.getElementById("notice");
     notice.hidden = false;
+    // Visitors see a plain message; the fix for the team is MAPBOX_TOKEN in .env (served as config.js)
     notice.innerHTML =
-      "<div><b>The map needs a Mapbox token.</b><br>" +
-      "Create <code>config.js</code> (copy <code>config.example.js</code>) " +
-      "and paste your token inside.<br>The station list still works.</div>";
+      "<div><b>The map view isn't available right now.</b><br>" +
+      "Every station is still listed under Nearby hubs.</div>";
+    console.info("WattSpot map: set MAPBOX_TOKEN in .env to show the map.");
     return;
   }
 
@@ -258,6 +258,15 @@ function startMap() {
   map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), "top-right");
   map.on("load", render);
 }
+
+// Show the driver's saved car (from the setup pages) in the top bar
+(function showCar() {
+  try {
+    const car = JSON.parse(localStorage.getItem("wattspot_vehicle"));
+    const name = car && [car.make, car.model].filter(Boolean).join(" ");
+    if (name) document.getElementById("car-pill").textContent = "🚗 " + name;
+  } catch (e) { /* no saved car */ }
+})();
 
 startMap();
 loadStations();

@@ -1,33 +1,52 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WattSpot — All Stations</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="common.js" defer></script>
     <script src="directory.js" defer></script>
   </head>
   <body>
     <header class="topbar">
-      <div class="logo">WattSpot</div>
+      <div class="logo"><a href="index.html">WattSpot</a></div>
       <nav class="topbar-links">
         <a href="map.html">Map</a>
-        <a href="directory.html">Stations</a>
+        <a href="directory.html" aria-current="page">Stations</a>
+        <a href="/shop/cart.html">Cart</a>
       </nav>
     </header>
 
-    <main style="padding: 40px; max-width: 800px; margin: 0 auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h1 style="color: white;">All stations</h1>
-        
-        <div>
-          <!-- Sort buttons -->
-          <button id="sort-nearest" class="primary-btn" style="width: auto; margin: 0 5px;">Nearest</button>
-          <button id="sort-avail" class="primary-btn" style="width: auto; margin: 0 5px;">Availability</button>
-          <button id="sort-price" class="primary-btn" style="width: auto; margin: 0 5px;">Lowest price</button>
-        </div>
+    <main class="page">
+      <h1>All stations</h1>
+      <p class="page-sub">Quezon City chargers from every network. Socket counts update live.</p>
+
+      <div class="toolbar">
+        <label for="q" class="sr-only">Search stations</label>
+        <input id="q" class="search-input" type="search" placeholder="Search a mall, street or area…" />
+        <label for="connector" class="sr-only">Plug type</label>
+        <select id="connector">
+          <option value="">All plug types</option>
+          <option value="CCS2">CCS2 DC (fast)</option>
+          <option value="Type2">Type 2 AC</option>
+        </select>
+        <label for="pricing" class="sr-only">Price</label>
+        <select id="pricing">
+          <option value="">Free and paid</option>
+          <option value="FREE">Free charging</option>
+          <option value="PAID">Paid</option>
+        </select>
       </div>
 
-      <ul id="station-list" style="list-style: none; padding: 0;"></ul>
+      <div class="sort-row" role="group" aria-label="Sort stations">
+        <span>Sort:</span>
+        <button id="sort-nearest" class="chip" aria-pressed="true">Nearest</button>
+        <button id="sort-avail" class="chip" aria-pressed="false">Most free</button>
+        <button id="sort-price" class="chip" aria-pressed="false">Lowest price</button>
+      </div>
+
+      <ul id="station-list" class="card-list" aria-live="polite"></ul>
     </main>
   </body>
 </html>

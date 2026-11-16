@@ -3,7 +3,20 @@
 const cfg = require('./config');
 const { manila, addMinutes } = require('./time');
 
-// How long a charge takes, and how many 30-minute slots it holds
+// Energy to add, in kWh: battery size × the share being filled.
+// e.g. a 60 kWh battery from 20% to 80% needs 60 × 0.60 = 36 kWh.
+function energyNeeded(batteryKwh, startPct, targetPct) {
+  return Math.round(batteryKwh * (targetPct - startPct)) / 100;
+}
+
+// A charge runs at the lower of the charger's output and what the car accepts.
+// e.g. a 22 kW plug and a car that takes 11 kW AC → 11 kW.
+function chargingSpeed(chargerKw, carMaxKw) {
+  return Math.min(chargerKw, carMaxKw);
+}
+
+// How long a charge takes (kWh ÷ kW), and how many 30-minute slots it holds.
+// e.g. 36 kWh at 50 kW = 44 min → 2 slots.
 function chargingWindow(kwh, powerKw, slotStart) {
   const minutes = Math.ceil((kwh / powerKw) * 60);
   const slotCount = Math.max(1, Math.ceil(minutes / cfg.SLOT_MINUTES));
@@ -33,4 +46,14 @@ function calculateOrder({ kwh, pricePerKwhCents, slotStart, paymentMethod }) {
   return { chargingCents, reservationFeeCents, depositCents, totalCents, revenueCents, pointsEarned, pointsRedeemed, offPeak };
 }
 
-module.exports = { chargingWindow, calculateOrder, isOffPeak };
+// Everything about one planned charge: energy, speed, time window and bill.
+// Used by the booking, the quote and the open-times routes so they always agree.
+function planCharge({ batteryKwh, maxKw, startPct, targetPct, chargerKw, pricePerKwhCents, slotStart, paymentMethod }) {
+  const kwh = energyNeeded(batteryKwh, startPct, targetPct);
+  const speedKw = chargingSpeed(chargerKw, maxKw);
+  const window = chargingWindow(kwh, speedKw, slotStart);
+  const bill = calculateOrder({ kwh, pricePerKwhCents, slotStart, paymentMethod });
+  return { kwh, speedKw, ...window, bill };
+}
+
+module.exports = { energyNeeded, chargingSpeed, chargingWindow, calculateOrder, planCharge, isOffPeak };

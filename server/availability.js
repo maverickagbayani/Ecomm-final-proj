@@ -2,7 +2,8 @@
 // Whether a socket is free is always computed from the bookings saved in the database.
 // Nothing here talks to the database itself: it receives bookings and does the math.
 const { SLOT_MINUTES, PAST_GRACE_MINUTES } = require('./config');       // 30-minute slots; 5-minute grace
-const { fromDb, manila, manilaMidnight, addMinutes } = require('./time'); // Manila time helpers
+const { manila, manilaMidnight, addMinutes } = require('./time'); // Manila time helpers
+// Each "order" passed in here is { slot_start, slot_end } (Dates), e.g. one per slot hold.
 
 // True if the station is open 24/7 (stored as opening at 0 and closing at 24)
 const is24h = (station) => station.open_hour === 0 && station.close_hour === 24;
@@ -28,8 +29,8 @@ function fitsOpeningHours(station, start, end) {
 function busyPerSlot(orders, windowStart, slotCount) {
   const busy = new Array(slotCount).fill(0);            // start every slot at 0 bookings
   for (const o of orders) {
-    const s = fromDb(o.slot_start).getTime();            // booking start, in milliseconds
-    const e = fromDb(o.slot_end).getTime();              // booking end
+    const s = new Date(o.slot_start).getTime();          // booking start, in milliseconds
+    const e = new Date(o.slot_end).getTime();            // booking end
     for (let k = 0; k < slotCount; k++) {
       const a = windowStart.getTime() + k * SLOT_MINUTES * 60000;  // this slot's start
       const b = a + SLOT_MINUTES * 60000;                          // this slot's end

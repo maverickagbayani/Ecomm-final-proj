@@ -1,0 +1,880 @@
+{
+  "info": {
+    "name": "WattSpot API (GC2, MongoDB)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "For the MongoDB backend (branch g4/m1-mongodb-switch). Set baseUrl to the Render URL for final evidence. Run 'Open times' first: it saves an open slot into {{slotStart}}."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "date",
+      "value": ""
+    },
+    {
+      "key": "slotStart",
+      "value": ""
+    },
+    {
+      "key": "bookingId",
+      "value": ""
+    },
+    {
+      "key": "reportId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Browse & detail",
+      "item": [
+        {
+          "name": "List stations",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Returns a list\", () => pm.expect(pm.response.json()).to.be.an(\"array\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stations",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "stations"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Search: Katipunan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stations?q=Katipunan",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "stations"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Katipunan"
+                }
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Filter: CCS2, paid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stations?connector=CCS2&pricing=PAID",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "stations"
+              ],
+              "query": [
+                {
+                  "key": "connector",
+                  "value": "CCS2"
+                },
+                {
+                  "key": "pricing",
+                  "value": "PAID"
+                }
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "One station (commonwealth-hub)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stations/commonwealth-hub",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "stations",
+                "commonwealth-hub"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Open times (CWH-DC1, tomorrow)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "const s = pm.response.json().starts;",
+                  "pm.test(\"Has open times\", () => pm.expect(s.length).to.be.above(0));",
+                  "if (s.length) pm.collectionVariables.set(\"slotStart\", s[Math.min(4, s.length - 1)].slot_start);"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Tomorrow in Manila, e.g. 2026-11-17",
+                  "const d = new Date(Date.now() + 8*3600*1000 + 24*3600*1000);",
+                  "pm.collectionVariables.set(\"date\", d.toISOString().slice(0, 10));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stations/commonwealth-hub/availability?connectorId=CWH-DC1&date={{date}}&battery_kwh=60&max_kw=100&start_pct=20&target_pct=80",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "stations",
+                "commonwealth-hub",
+                "availability"
+              ],
+              "query": [
+                {
+                  "key": "connectorId",
+                  "value": "CWH-DC1"
+                },
+                {
+                  "key": "date",
+                  "value": "{{date}}"
+                },
+                {
+                  "key": "battery_kwh",
+                  "value": "60"
+                },
+                {
+                  "key": "max_kw",
+                  "value": "100"
+                },
+                {
+                  "key": "start_pct",
+                  "value": "20"
+                },
+                {
+                  "key": "target_pct",
+                  "value": "80"
+                }
+              ]
+            },
+            "description": "Revenue feature 1: only open start times. Saves one into {{slotStart}}."
+          }
+        },
+        {
+          "name": "Price preview (quote)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/quote",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings",
+                "quote"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector_id\": \"CWH-DC1\",\n  \"slot_start\": \"{{slotStart}}\",\n  \"payment_method\": \"GCash\",\n  \"vehicle\": {\n    \"model\": \"BYD Atto 3\",\n    \"battery_kwh\": 60,\n    \"max_kw\": 100\n  },\n  \"start_pct\": 20,\n  \"target_pct\": 80\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Book & read back",
+      "item": [
+        {
+          "name": "Create booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"bookingId\", pm.response.json().id);",
+                  "pm.test(\"Server computed the total\", () => pm.expect(pm.response.json().total).to.be.above(0));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector_id\": \"CWH-DC1\",\n  \"slot_start\": \"{{slotStart}}\",\n  \"payment_method\": \"GCash\",\n  \"vehicle\": {\n    \"model\": \"BYD Atto 3\",\n    \"battery_kwh\": 60,\n    \"max_kw\": 100\n  },\n  \"start_pct\": 20,\n  \"target_pct\": 80,\n  \"customer_name\": \"Postman Tester\",\n  \"customer_email\": \"postman@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Read booking back",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/{{bookingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings",
+                "{{bookingId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "All bookings (owner)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Watt Credits for the email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/customers/postman@example.com/points",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "customers",
+                "postman@example.com",
+                "points"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Owner metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/metrics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "metrics"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Challenge 1: break the API",
+      "item": [
+        {
+          "name": "C1-1a target % lower than battery now",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings"
+              ]
+            },
+            "description": "Our version of 'quantity 0 or -3': a charge that adds no energy → 400",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector_id\": \"CWH-DC1\",\n  \"slot_start\": \"{{slotStart}}\",\n  \"payment_method\": \"GCash\",\n  \"vehicle\": {\n    \"model\": \"BYD Atto 3\",\n    \"battery_kwh\": 60,\n    \"max_kw\": 100\n  },\n  \"start_pct\": 80,\n  \"target_pct\": 20,\n  \"customer_name\": \"Postman Tester\",\n  \"customer_email\": \"c11@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "C1-1b battery size -3 kWh",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector_id\": \"CWH-DC1\",\n  \"slot_start\": \"{{slotStart}}\",\n  \"payment_method\": \"GCash\",\n  \"vehicle\": {\n    \"model\": \"BYD Atto 3\",\n    \"battery_kwh\": -3,\n    \"max_kw\": 100\n  },\n  \"start_pct\": 20,\n  \"target_pct\": 80,\n  \"customer_name\": \"Postman Tester\",\n  \"customer_email\": \"c11@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "C1-2 wrong total from browser",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"Server ignored total: 1\", () => pm.expect(pm.response.json().total).to.not.eql(1));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings"
+              ]
+            },
+            "description": "The browser sends a fake total → saved with the server's total",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector_id\": \"CWH-DC2\",\n  \"slot_start\": \"{{slotStart}}\",\n  \"payment_method\": \"GCash\",\n  \"vehicle\": {\n    \"model\": \"BYD Atto 3\",\n    \"battery_kwh\": 60,\n    \"max_kw\": 100\n  },\n  \"start_pct\": 20,\n  \"target_pct\": 80,\n  \"customer_name\": \"Postman Tester\",\n  \"customer_email\": \"c12@example.com\",\n  \"total\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "C1-3 slot already taken",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings"
+              ]
+            },
+            "description": "'Create booking' already holds {{slotStart}} on plug CWH-DC1 → 409",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector_id\": \"CWH-DC1\",\n  \"slot_start\": \"{{slotStart}}\",\n  \"payment_method\": \"GCash\",\n  \"vehicle\": {\n    \"model\": \"BYD Atto 3\",\n    \"battery_kwh\": 60,\n    \"max_kw\": 100\n  },\n  \"start_pct\": 20,\n  \"target_pct\": 80,\n  \"customer_name\": \"Postman Tester\",\n  \"customer_email\": \"c13@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "C1-4a unknown station id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stations/does-not-exist",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "stations",
+                "does-not-exist"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "C1-4b unknown booking id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings",
+                "000000000000000000000000"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "C1-5 missing email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 400\", () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "bookings"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"connector_id\": \"CWH-DC1\",\n  \"slot_start\": \"{{slotStart}}\",\n  \"payment_method\": \"GCash\",\n  \"vehicle\": {\n    \"model\": \"BYD Atto 3\",\n    \"battery_kwh\": 60,\n    \"max_kw\": 100\n  },\n  \"start_pct\": 20,\n  \"target_pct\": 80,\n  \"customer_name\": \"Postman Tester\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "C1-6 search with no match",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Empty list\", () => pm.expect(pm.response.json()).to.eql([]));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stations?q=zzzz",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "stations"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "zzzz"
+                }
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Incident reports",
+      "item": [
+        {
+          "name": "Send report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"reportId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"station_id\": \"commonwealth-hub\",\n  \"issue_type\": \"Broken charger\",\n  \"description\": \"Cable latch on plug 1 will not lock.\",\n  \"reporter_name\": \"Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List reports",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Resolve report",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/{{reportId}}/resolve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "reports",
+                "{{reportId}}",
+                "resolve"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    }
+  ]
+}
