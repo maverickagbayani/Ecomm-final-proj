@@ -3,32 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WattSpot — Welcome</title>
+    <title>WattSpot — Book an EV charging slot in Quezon City</title>
     <link rel="stylesheet" href="styles.css" />
-    <script src="auth.js" defer></script>
+    <script src="common.js" defer></script>
+    <script src="home-connect.js" defer></script>
   </head>
   <body>
-    <main class="welcome-container">
-      <div class="hero-text">
-        <h1>Real-time charging map for your seamless journey.</h1>
-        <p>Find and reserve a free EV charging socket in Quezon City before you arrive.</p>
-        <button onclick="window.location.href='directory.html'" class="primary-btn" style="margin-top: 15px;">Browse stations</button>
+    <header class="topbar">
+      <div class="logo"><a href="index.html">WattSpot</a></div>
+      <nav class="topbar-links">
+        <a href="map.html">Map</a>
+        <a href="directory.html">Stations</a>
+        <a href="/shop/cart.html">Cart</a>
+      </nav>
+    </header>
+
+    <main class="home-wrap">
+      <div class="welcome-container">
+        <div class="hero-text">
+          <h1>Every Quezon City charger, one booking.</h1>
+          <p>Live socket status across every network, not just one partner's. See what's free, book a 30-minute slot, and know when your charge will finish before you leave home.</p>
+          <button onclick="window.location.href='directory.html'" class="primary-btn" style="margin-top: 15px;">Browse stations</button>
+          <button onclick="window.location.href='map.html'" class="primary-btn link-btn">Search the map</button>
+        </div>
+
+        <div class="glass-card">
+          <h2>How it works</h2>
+          <ol class="how-list">
+            <li>Pick a station and a plug that fits your car.</li>
+            <li>Choose an open start time. Taken slots are never shown.</li>
+            <li>Pay the reservation fee and charging cost (simulated).</li>
+            <li>Earn Watt Credits on every booking, double at night.</li>
+          </ol>
+          <p id="vehicle-line" class="muted"></p>
+          <button id="vehicle-btn" class="primary-btn" onclick="window.location.href='setup-model.html'">Save your car</button>
+        </div>
       </div>
 
-      <div class="glass-card">
-        <h2>Create your account</h2>
-        
-        <p id="status-line" class="muted"></p> 
-
-        <label for="email-box">Email</label>
-        <input id="email-box" type="email" placeholder="you@email.com" />
-
-        <label for="password-box">Password</label>
-        <input id="password-box" type="password" placeholder="••••••••" />
-
-        <button id="signup-btn" class="primary-btn">Sign up</button>
-      </div>
+      <section style="margin-top: 32px; color: white;">
+        <h2>Free sockets right now</h2>
+        <ul id="featured-list" class="card-list"></ul>
+      </section>
     </main>
-    <script src="home-connect.js" defer></script>
   </body>
 </html>

@@ -1,16 +1,10 @@
-// Date helpers. The database stores UTC as 'YYYY-MM-DD HH:MM:SS'; opening hours are Manila time.
+// Date helpers. MongoDB stores real Date values (UTC); opening hours are Manila time.
 const { UTC_OFFSET_MINUTES, SLOT_MINUTES } = require('./config');
 
 const MINUTE = 60 * 1000;
 
-// Date → 'YYYY-MM-DD HH:MM:SS' (UTC) for MySQL
-const toDb = (date) => date.toISOString().slice(0, 19).replace('T', ' ');
-
-// 'YYYY-MM-DD HH:MM:SS' (UTC) from MySQL → Date
-const fromDb = (text) => new Date(text.replace(' ', 'T') + 'Z');
-
-// Date → ISO text for the API, or null
-const toIso = (text) => (text ? fromDb(text).toISOString() : null);
+// Date (or null) → ISO text for the API
+const toIso = (date) => (date ? new Date(date).toISOString() : null);
 
 // The Manila calendar date and minute-of-day of a moment
 function manila(date) {
@@ -41,4 +35,4 @@ function manilaClock(date) {
   return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 }
 
-module.exports = { MINUTE, toDb, fromDb, toIso, manila, manilaMidnight, addMinutes, isOnSlotBoundary, isValidDateString, manilaClock };
+module.exports = { MINUTE, toIso, manila, manilaMidnight, addMinutes, isOnSlotBoundary, isValidDateString, manilaClock };

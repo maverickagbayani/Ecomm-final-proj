@@ -1,55 +1,42 @@
-// SQL aggregates for the owner screen.
-// This file expects these tables and columns:
-//   orders:   product_id, kwh, status, slot_start, slot_end, revenue_cents,
-//             reservation_fee_cents, points_earned, points_redeemed
-//   products: id, station_id
-//   stations: id, name
-// If any names are different in your schema, tell me and I'll update the queries.
+// Aggregates for the owner screen, computed from saved bookings and slot holds.
+const { Booking, SlotHold } = require('../models');
+const { SLOT_MINUTES } = require('../config');
+const { addMinutes } = require('../time');
 
-const { getPool } = require('../db');
-
-async function orderTotals(db = getPool()) {
-  const [rows] = await db.query(
-    `SELECT COUNT(*) AS orders, COALESCE(SUM(revenue_cents), 0) AS revenue_cents,
-            COALESCE(SUM(reservation_fee_cents), 0) AS fee_cents,
-            COALESCE(SUM(points_earned), 0) AS points_earned, COALESCE(SUM(points_redeemed), 0) AS points_redeemed
-     FROM orders WHERE status = 'confirmed'`
-  );
-  return rows[0];
+// Totals over all confirmed bookings
+async function orderTotals() {
+  const [row] = await Booking.aggregate([
+    { $match: { status: 'confirmed' } },
+    {
+      $group: {
+        _id: null,
+        orders: { $sum: 1 },
+        revenue_cents: { $sum: '$revenueCents' },
+        fee_cents: { $sum: '$reservationFeeCents' },
+        points_earned: { $sum: '$pointsEarned' },
+        points_redeemed: { $sum: '$pointsRedeemed' },
+      },
+    },
+  ]);
+  return row || { orders: 0, revenue_cents: 0, fee_cents: 0, points_earned: 0, points_redeemed: 0 };
 }
 
-// The station with the most confirmed orders, breaking ties by kWh delivered.
-async function topStation(db = getPool()) {
-  
-// The station with the most confirmed bookings, breaking ties by kWh delivered.
-// Sends the query to MySQL and waits for the result. Groups bookings by station,
-// counts them and sums their kWh, sorts by count then kWh (highest first), and keeps the top one.
-
-  const [rows] = await db.query(
-    `SELECT s.id, s.name, COUNT(*) AS orders, SUM(o.kwh) AS kwh
-     FROM orders o JOIN products p ON p.id = o.product_id JOIN stations s ON s.id = p.station_id
-     WHERE o.status = 'confirmed'
-     GROUP BY s.id, s.name
-     ORDER BY orders DESC, kwh DESC
-     LIMIT 1`
-  );
-  return rows[0] || null;
+// The station with the most confirmed bookings, breaking ties by kWh booked.
+async function topStation() {
+  const [row] = await Booking.aggregate([
+    { $match: { status: 'confirmed' } },
+    { $group: { _id: '$stationId', name: { $first: '$stationName' }, orders: { $sum: 1 }, kwh: { $sum: '$kwh' } } },
+    { $sort: { orders: -1, kwh: -1 } },
+    { $limit: 1 },
+  ]);
+  return row ? { id: row._id, name: row.name, orders: row.orders, kwh: row.kwh } : null;
 }
 
-// Confirmed bookings that overlap the time window [fromDb, toDb).
-// Used to work out which stations are almost full. 
-async function bookedRows(fromDb, toDb, db = getPool()) {
-  const [rows] = await db.query(
-    `SELECT product_id, slot_start, slot_end FROM orders
-     WHERE status = 'confirmed' AND slot_start < ? AND slot_end > ?`,
-    [toDb, fromDb]
-  );
-  return rows;
+// Every held slot in the window [from, to), as { product_id, slot_start, slot_end }.
+// Used to work out which plugs are almost full.
+async function bookedRows(from, to) {
+  const holds = await SlotHold.find({ start: { $gte: from, $lt: to } }, { connectorId: 1, start: 1 }).lean();
+  return holds.map((h) => ({ product_id: h.connectorId, slot_start: h.start, slot_end: addMinutes(h.start, SLOT_MINUTES) }));
 }
-
-// Shared with server/routes/metrics.js (owner dashboard):
-//   orderTotals - total bookings, revenue and Watt Credits
-//   topStation  - most-booked station
-//   bookedRows  - bookings in a time window (for "slots almost full")
 
 module.exports = { orderTotals, topStation, bookedRows };

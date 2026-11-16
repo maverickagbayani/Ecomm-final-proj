@@ -1,12 +1,16 @@
 {
-  "name": "ecomm-final-proj-main-2",
+  "name": "wattspot",
   "version": "1.0.0",
-  "description": "",
+  "description": "WattSpot: EV charging-slot booking for Quezon City (GC2)",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "db:setup": "node db/setup.js",
+    "dev": "node --watch server.js",
+    "seed": "node scripts/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "24.x"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +19,6 @@
   "dependencies": {
     "dotenv": "^18.0.9",
     "express": "^5.3.0",
-    "mysql2": "^3.11.0"
+    "mongoose": "^9.12.1"
   }
 }

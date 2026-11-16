@@ -1,25 +1,30 @@
 var carTitle = document.getElementById("car-title");
 var batteryBox = document.getElementById("battery-box");
 var speedBox = document.getElementById("speed-box");
-var finishBtn = document.getElementById("finish-btn");
+var msg = document.getElementById("specs-msg");
 
 function loadCar() {
-  var saved = localStorage.getItem("wattspot_vehicle");
-  return saved ? JSON.parse(saved) : null; 
+  try { return JSON.parse(localStorage.getItem("wattspot_vehicle")); } catch (e) { return null; }
 }
 
 var currentCar = loadCar();
 
-// Auto-fill the inputs if the car was found in localStorage
+// Auto-fill the inputs from the car picked on step 1
 if (currentCar) {
-  carTitle.textContent = "Confirm specs for " + currentCar.model;
+  carTitle.textContent = "Confirm specs for " + ((currentCar.make ? currentCar.make + " " : "") + currentCar.model);
   batteryBox.value = currentCar.battery;
   speedBox.value = currentCar.speed;
 } else {
-  carTitle.textContent = "No vehicle selected";
+  window.location.replace("setup-model.html"); // nothing picked yet
 }
 
-finishBtn.addEventListener("click", function () {
-  // Move to the map!
-  window.location.href = "map.html";
+document.getElementById("specs-form").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var battery = Number(batteryBox.value), speed = Number(speedBox.value);
+  if (!(battery >= 10 && battery <= 200)) { msg.innerHTML = '<div class="error-msg">Battery capacity must be between 10 and 200 kWh.</div>'; return; }
+  if (!(speed >= 3 && speed <= 400)) { msg.innerHTML = '<div class="error-msg">Max charging speed must be between 3 and 400 kW.</div>'; return; }
+  currentCar.battery = battery;
+  currentCar.speed = speed;
+  try { localStorage.setItem("wattspot_vehicle", JSON.stringify(currentCar)); } catch (err) { /* storage blocked */ }
+  window.location.href = "directory.html";
 });
