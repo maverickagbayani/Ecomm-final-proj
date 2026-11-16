@@ -2,25 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WattSpot — Confirm your specs</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="setup-specs.js" defer></script>
   </head>
-  <body style="display: flex; flex-direction: column; align-items: center; padding-top: 50px;">
-    
-    <div class="glass-card" style="width: 500px; max-width: 90%;">
-      <p class="muted">STEP 2 OF 2</p>
-      <h1 id="car-title">Confirm your specs</h1>
-      <p class="muted">(placeholders here only)</p>
-      
-      <label for="battery-box">Battery capacity (kWh)</label>
-      <input id="battery-box" type="number" />
-      
-      <label for="speed-box">Max charging speed (kW)</label>
-      <input id="speed-box" type="number" />
-      
-      <button id="finish-btn" class="primary-btn">Save & start charging</button>
-    </div>
+  <body>
+    <header class="topbar">
+      <div class="logo"><a href="index.html">WattSpot</a></div>
+      <div class="topbar-links" style="color: white;">Step 2 of 2</div>
+    </header>
 
+    <main class="page" style="display: flex; justify-content: center;">
+      <form id="specs-form" class="glass-card" style="max-width: 500px;" novalidate>
+        <p class="muted">STEP 2 OF 2</p>
+        <h1 id="car-title">Confirm your specs</h1>
+        <p class="muted">Check these against your car's manual. You can change them any time.</p>
+
+        <label for="battery-box">Battery capacity (kWh)</label>
+        <input id="battery-box" type="number" inputmode="decimal" min="10" max="200" step="0.1" required />
+
+        <label for="speed-box">Max charging speed (kW)</label>
+        <input id="speed-box" type="number" inputmode="decimal" min="3" max="400" step="1" required />
+
+        <div id="specs-msg" role="alert"></div>
+        <button id="finish-btn" type="submit" class="primary-btn">Save &amp; find a charger</button>
+        <a href="setup-model.html" class="primary-btn link-btn" style="display: block; text-align: center; text-decoration: none;">Pick a different car</a>
+      </form>
+    </main>
   </body>
 </html>

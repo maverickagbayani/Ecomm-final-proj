@@ -1,60 +1,28 @@
-var searchBox = document.getElementById("search-box");
-var sidebar = document.getElementById("nearby-sidebar");
-var searchResults = document.getElementById("search-results");
-
-// Mock Database of stations
-var STATIONS = [
-  { name: "UP Town Center", distance: "0.8 km", status: "4 free" },
-  { name: "Eastwood Mall", distance: "3.1 km", status: "2 free" },
-  { name: "SM North EDSA", distance: "4.4 km", status: "1 free" }
-];
-
-function debounce(fn, delay) {
-  var timer;
-  return function () {
-    var args = arguments;
-    clearTimeout(timer);
-    timer = setTimeout(function () {
-      fn.apply(null, args);
-    }, delay);
-  };
-}
+// Map search: live stations from /api/stations?q=, nearest first. Each result opens its station page.
+// The full interactive Mapbox map is Zaira's page at /frontend-map/.
+var searchBox = $("search-box");
+var searchResults = $("search-results");
 
 function renderResults(items) {
-  searchResults.innerHTML = "";
-  
-  items.forEach(function (station) {
-    var li = document.createElement("li");
-    li.className = "glass-card";
-    li.style.marginBottom = "10px";
-    li.innerHTML = `<strong>${station.name}</strong><br>${station.distance} — ${station.status}`;
-    searchResults.append(li);
-  });
+  if (!items.length) return showState(searchResults, "empty", "No stations match. Try another street or area.");
+  searchResults.innerHTML = items
+    .slice()
+    .sort(function (a, b) { return distanceKm(QC_CENTER, a.location.coordinates) - distanceKm(QC_CENTER, b.location.coordinates); })
+    .map(function (s) { return stationCard(s, distanceKm(QC_CENTER, s.location.coordinates).toFixed(1) + " km"); })
+    .join("");
 }
 
-function handleSearch(query) {
-  var needle = query.trim().toLowerCase();
-  
-  if (needle === "") {
-    // Hide sidebar if search is empty
-    sidebar.classList.add("hidden");
-    return;
+var requestNo = 0;
+async function handleSearch(query) {
+  var mine = ++requestNo;
+  showState(searchResults, "loading", "Searching…");
+  try {
+    var items = await getJSON("/api/stations?q=" + encodeURIComponent(query.trim()));
+    if (mine === requestNo) renderResults(items);
+  } catch (e) {
+    if (mine === requestNo) showState(searchResults, "error", "Could not load stations. Try again.");
   }
-
-  // Show sidebar
-  sidebar.classList.remove("hidden");
-
-  var results = STATIONS.filter(function (station) {
-    return station.name.toLowerCase().indexOf(needle) !== -1;
-  });
-
-  renderResults(results);
 }
 
-// Attach debounced event listener
-searchBox.addEventListener(
-  "input",
-  debounce(function () {
-    handleSearch(searchBox.value);
-  }, 300)
-);
+searchBox.addEventListener("input", debounce(function () { handleSearch(searchBox.value); }, 300));
+handleSearch("");
